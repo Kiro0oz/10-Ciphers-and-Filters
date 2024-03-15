@@ -1,16 +1,24 @@
 /*
-Authors: Kirollos Adel Samir -20230295 - Simple Substitution Cipher.
-         Noura Muhammad Mahmoud - 20230448 - Xor Cipher.
-         Eman Emad Abdulrahim- 20230619 - Rail fence Cipher.
-Version: 8.0
+FCAI – Structured Programming – 2024 - Assignment 2
+----------------------------------------------------
+File: CS112_A2_T4_S17,18_20230295_20230448_20230619
+Purpose: 10 Ciphers
+Author: Kirollos Adel Samir-S17
+        Noura Muhammad Mahmoud-S18
+        Eman Emad Abdulrahim-S18
+Emails: Kiroadel113@gmail.com
+        nouraarafa180@gmail.com
+        emanemadfarghaly@gmail.com
+ID 1: 20230295- ciphers=>1,3,5
+ID 2: 20230448- ciphers=>6,7,8
+ID 3: 20230619- ciphers=>0,2,4
 */
 
 #include<bits/stdc++.h>
 using namespace std;
 
 
-/*=========Simple Substitution=========*/
-
+/*=========5.Simple Substitution=========*/
 // Get the alphabet after adding the word
 vector<char> add_key_to_alpha(string key){
     vector<char> alpha ;
@@ -165,12 +173,158 @@ void Decryption() {
     cout << "\nThe Plain Text is: " << lower_res;
 }
 
-/*=========Xor=========*/
-
-// Function to check if the input is not empty
+/*=========6.Morse Code==========*/
 bool isNotEmpty(const string& str) {
     return !str.empty();
 }
+
+string Morse_code_Encryption(const string& message) {
+    string cleaned_message;
+    string result;
+
+    for (char ch : message) {
+        if (isalpha(ch) || ch == ' ') {
+            char lowercase_ch = tolower(ch);
+            cleaned_message += lowercase_ch;
+            switch (lowercase_ch) {
+                case 'a': result += ".- "; break;
+                case 'b': result += "-... "; break;
+                case 'c': result += "-.-. "; break;
+                case 'd': result += "-.. "; break;
+                case 'e': result += ". "; break;
+                case 'f': result += "..-."; break;
+                case 'g': result += "--. "; break;
+                case 'h': result += ".... "; break;
+                case 'i': result += ".. "; break;
+                case 'j': result += ".--- "; break;
+                case 'k': result += "-.- "; break;
+                case 'l': result += ".-.. "; break;
+                case 'm': result += "-- "; break;
+                case 'n': result += "-. "; break;
+                case 'o': result += "--- "; break;
+                case 'p': result += ".--. "; break;
+                case 'q': result += "--.- "; break;
+                case 'r': result += ".-. "; break;
+                case 's': result += "... "; break;
+                case 't': result += "- "; break;
+                case 'u': result += "..- "; break;
+                case 'v': result += "...- "; break;
+                case 'w': result += ".-- "; break;
+                case 'x': result += "-..- "; break;
+                case 'y': result += "-.-- "; break;
+                case 'z': result += "--.. "; break;
+                case ' ': result += "   "; break;
+                default: break; // Ignore non-alphabetic characters
+            }
+        } else {
+            cout << "Error: Please enter a valid message with letters only and Try Again." << endl;
+            return ""; // Return an empty string to indicate error 
+        }
+    }
+
+    return result;
+}
+
+string getcode(const string& morse_code) {
+    if (morse_code == ".-") return "a";
+    if (morse_code == "-...") return "b";
+    if (morse_code == "-.-.") return "c";
+    if (morse_code == "-..") return "d";
+    if (morse_code == ".") return "e";
+    if (morse_code == "..-.") return "f";
+    if (morse_code == "--.") return "g";
+    if (morse_code == "....") return "h";
+    if (morse_code == "..") return "i";
+    if (morse_code == ".---") return "j";
+    if (morse_code == "-.-") return "k";
+    if (morse_code == ".-..") return "l";
+    if (morse_code == "--") return "m";
+    if (morse_code == "-.") return "n";
+    if (morse_code == "---") return "o";
+    if (morse_code == ".--.") return "p";
+    if (morse_code == "--.-") return "q";
+    if (morse_code == ".-.") return "r";
+    if (morse_code == "...") return "s";
+    if (morse_code == "-") return "t";
+    if (morse_code == "..-") return "u";
+    if (morse_code == "...-") return "v";
+    if (morse_code == ".--") return "w";
+    if (morse_code == "-..-") return "x";
+    if (morse_code == "-.--") return "y";
+    if (morse_code == "--..") return "z";
+    return "";
+}
+
+bool isValidMorseCharacter(char ch) {
+    // Valid Morse code characters: . - /
+    return (ch == '.' || ch == '-' || ch == '/');
+}
+
+bool isValidMorseCode(const string& code) {
+    for (char ch : code) {
+        if (!isValidMorseCharacter(ch) && ch != ' ') {
+            return false;
+        }
+    }
+    return true;
+}
+string Morse_code_Decryption() {
+    
+    string echar_morse, result, message;
+    int u = 0, count_space = 0;
+    cout << "Enter Your Encrypted Text:\n";
+    getline(cin, message);
+
+    // Check if the input is valid Morse code
+    if (!isValidMorseCode(message) || message.empty()) {
+        cout << "Error: Input is not a Morse code, Please Try Again." << endl;
+        return ""; // Return an empty string to indicate error
+    }
+
+    for (int i = 0; i < message.length() - 1; i++) {
+        if (message[i] == ' ' && message[i + 1] != ' ') {
+            for (int x = u; x < i; x++) {
+                echar_morse += message[x];
+            }
+            u = i + 1;
+            result += getcode(echar_morse);
+            echar_morse = "";
+        }
+
+        // This to count the spaces and add space to the result and ignore other spaces
+        if (message[i] == ' ' && message[i + 1] == ' ') {
+            while (message[i] == ' ') {
+                i += 1;
+                count_space++;
+            }
+            for (int x = u; x < i - count_space; x++) {
+                echar_morse += message[x];
+            }
+            u = i + 1;
+            result += getcode(echar_morse);
+            echar_morse = "";
+            result += " ";
+            u--;
+        }
+        count_space = 0;
+    }
+
+    echar_morse = "";
+    for (int x = u; x < message.length(); x++) {
+        echar_morse += message[x];
+    }
+    echar_morse.erase(remove(echar_morse.begin(), echar_morse.end(), ' '), echar_morse.end());
+    result += getcode(echar_morse);
+    result += "\n";
+
+    cout << "Decrypted Text:\n" << result;
+    return result; // Return the decrypted text
+}
+
+
+
+/*=========8.Xor=========*/
+
 // Function to get non-empty input from the user
 string getNonEmptyInput(const string& prompt) {
     string input;
@@ -265,7 +419,7 @@ void xordecipher() {
         break;
     }
 }
-/*=========Rail-Fence=========*/
+/*=========9.Rail-Fence=========*/
 
 // Function to encrypt text using Rail Fence Cipher
 string encrypt_Rail_Fence(string text) {
@@ -340,6 +494,10 @@ int main() {
         cout << "============================\n";
         cout << "Choose an option: ";
         getline(cin, input);
+        if (input.size() != 1 || (input[0] != '1' && input[0] != '2' && input[0] != '3')) {
+            cout << "Invalid input. Please enter '1' for Cipher, '2' for Decipher, or '3' for Exit." << endl;
+            continue;
+        }         
 
         if (!isNotEmpty(input) || !isdigit(input[0]) || !isValidChoice(input[0])) {
             cout << "Invalid input. Please enter '1' for Cipher, '2' for Decipher, or '3' for Exit." << endl;
@@ -351,67 +509,92 @@ int main() {
         if (choice == '1') {
             cout << "Which Cipher do you like to choose?" << endl;
             cout << "\n==========================\n";
-            cout << "1) Simple Substitution\n";
-            cout << "2) Xor\n";
-            cout << "3) Rail-Fence\n";
+            cout << "5) Simple Substitution\n";
+            cout << "6) Morse Code\n";
+            cout << "8) Xor\n";
+            cout << "9) Rail-Fence\n";
             cout << "===========================\n";
             cout << "Choose an option : ";
             getline(cin, input);
 
-            if (!isNotEmpty(input) || !isdigit(input[0]) || (input[0] < '1' || input[0] > '3')) {
-                cout << "Invalid input. Please enter a number in the range[1-3]." << endl;
+            if (input.size() != 1 || input[0] !='0' && input[0] != '1' && input[0] !='2' && input[0] != '3' &&
+            input[0] != '4' && input[0] !='5' && input[0] != '6' &&input[0] != '7' && input[0] !='8' && input[0] != '9') {
+            cout << "Invalid input. Please Try Again." << endl;
+            continue;
+            }             
+            if (!isNotEmpty(input) || !isdigit(input[0]) || (input[0] < '0' || input[0] > '9')) {
+                cout << "Invalid input. Please enter a number in the range[0-9]." << endl;
                 continue;
             }
 
             n = input[0];
 
-            if (n == '1') {
+            if (n == '5') {
                 cout << "> Simple Substitution Cipher <\n";
                 Encryption();
-            } else if (n == '2') {
+            } 
+            else if(n=='6'){
+                cout << "> Morse Code Cipher <\n"; 
+                string message;
+                cout <<  "* Enter Your Plain Text : " << endl;
+                getline(cin , message);
+                cout<< "Encrypted Text: " << Morse_code_Encryption(message);
+            }
+            else if (n == '8') {
                 cout << "> Xor Cipher <\n";
                 xorcipher();
-            } else if (n == '3') {
+            } else if (n == '9') {
                 cout << "> Rail-Fence Cipher <\n";
                 string text;
                 cout << "* Enter Your Plain Text : " << endl;
                 getline(cin, text);
                 cout << "Encrypted Text: " << encrypt_Rail_Fence(text) << endl;
             } else {
-                cout << "Invalid: please Enter a number in range[1-3].." << endl;
+                cout << "Invalid: please Enter a number in range[0-9].." << endl;
                 continue;
             }
         } else if (choice == '2') {
             cout << "Which Decipher do you like to choose?" << endl;
-            cout << "==========================\n";
-            cout << "1) Simple Substitution\n";
-            cout << "2) Xor\n";
-            cout << "3) Rail-Fence\n";
-            cout << "============================\n";
+            cout << "\n==========================\n";
+            cout << "5) Simple Substitution\n";
+            cout << "6) Morse Code\n";
+            cout << "8) Xor\n";
+            cout << "9) Rail-Fence\n";
+            cout << "===========================\n";
             cout << "Choose an option : ";
             getline(cin, input);
 
-            if (!isNotEmpty(input) || !isdigit(input[0]) || (input[0] < '1' || input[0] > '3')) {
-                cout << "Invalid input. Please enter a number in the range[1-3]." << endl;
+            if (input.size() != 1 || input[0] !='0' && input[0] != '1' && input[0] !='2' && input[0] != '3' &&
+            input[0] != '4' && input[0] !='5' && input[0] != '6' &&input[0] != '7' && input[0] !='8' && input[0] != '9') {
+            cout << "Invalid input. Please Try Again." << endl;
+            continue;
+            }             
+
+            if (!isNotEmpty(input) || !isdigit(input[0]) || (input[0] < '1' || input[0] > '9')) {
+                cout << "Invalid input. Please enter a number in the range[0-9]." << endl;
                 continue;
             }
 
             n = input[0];
 
-            if (n == '1') {
+            if (n == '5') {
                 cout << "> Simple Substitution Decipher <\n";
                 Decryption();
-            } else if (n == '2') {
+            } else if(n == '6') {
+                cout << "> Morse Code Decipher <\n";
+                Morse_code_Decryption();    
+            }
+            else if (n == '8') {
                 cout << "> Xor Decipher <\n";
                 xordecipher();
-            } else if (n == '3') {
+            } else if (n == '9') {
                 cout << "> Rail-Fence Decipher <\n";
                 string text;
                 cout << "* Enter Your Encrypted Text : " << endl;
                 getline(cin, text);
-                cout << "Decrypted Text: " << decrypt_Rail_Fence(text) << endl;
+                cout <<"Decrypted Text: " << decrypt_Rail_Fence(text) << endl;
             } else {
-                cout << "Invalid: please Enter a number in range[1-3].." << endl;
+                cout << "Invalid: please Enter a number in range[0-9].." << endl;
                 continue;
             }
         } else if (choice == '3') {
