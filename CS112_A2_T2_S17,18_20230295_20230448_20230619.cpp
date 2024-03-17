@@ -17,7 +17,124 @@ ID 3: 20230619- ciphers=>0,2,4
 #include<bits/stdc++.h>
 using namespace std;
 
-/*=========4.Vignere Cipher=========*/
+string alphabet() {
+    string alpha;
+    for (int i = 65; i <= 90; ++i)
+        alpha += char(i);
+    return alpha;
+}
+string upper_case(string text){
+    for(int i=0 ;i<text.length();++i)
+        text[i]= toupper(char(text[i]));
+    return text;
+}
+string lower_case(string text){
+    for(int i=0 ;i<text.length();++i)
+        text[i]= tolower(char(text[i]));
+    return text;
+}
+string removespace(string text){
+    for (int i = 0; i < text.length(); ++i){
+        if (isspace(text[i]))
+            text.erase(text.begin() + i);
+    }
+    return text;
+}
+void invalid(string text){
+    text=removespace(text);
+    for (char i:text){
+        if (!isalpha(i)){
+            cout<<"Please Enter a Valid Text";
+            break;
+        }
+    }
+}
+
+/*=========0.Affine Cipher=========*/
+void Affine_Cipher(string text){
+    int a,b;
+    cout<<"Enter a,b for Encryption Equation\n";
+    cin>>a>>b;
+    string ciphertext;
+    text=upper_case(text);
+    for (char i:text){
+        for (int x=0;x<26;++x){
+        if ( i == alphabet()[x])
+            ciphertext += alphabet()[(a*x+b)%26];
+        }
+    }
+    cout<<"The encrypted text is: "<<ciphertext<<endl;
+    
+}
+void Affine_Decipher(string text){
+    int c,b;
+    cout<<"Enter c ,b for Decryption Equation\n";
+    cin>>c>>b;
+    string plaintext;
+    text=upper_case(text);
+    int D;
+    for (char i : text){
+        for (int y=0;y<26;++y){
+            if ( i == alphabet()[y]){
+                D = c*(y-b);
+                if (D<0){
+                    for (int i=1 ;D<0;++i)
+                        D+=i*26;
+                }
+            }
+        }
+        plaintext += alphabet()[(D%26)];
+    }
+    cout<< "The Decrypted text is: "<<plaintext;
+}
+
+
+/*=========2.Atbash Cipher=========*/
+void Atbash_Cipher_V1(string text){
+    string ciphertext;
+    string cipheredchars;
+    text=upper_case(text);
+    
+    for (int i=25;i>=0;--i)
+        cipheredchars+=alphabet()[i];
+    for (char i: text ){
+        if (isspace(i))
+            ciphertext+=" ";
+        else{
+            for (int j=0;j<26;++j){
+                if ( i == alphabet()[j])
+                    ciphertext+=cipheredchars[j];
+            }
+        }
+    }
+    cout<<ciphertext;
+}
+void Atbash_Cipher_V2(string text){
+    string g1;
+    string g2;
+    string ciphertext;
+
+    for (int i=25;i>=0;--i){
+        if (i>=13)
+            g2+=alphabet()[i];
+        else
+            g1+=alphabet()[i];
+    }
+    text=upper_case(text);
+    for (char i: text ){
+        if (isspace(i))
+            ciphertext+=' ';
+        else{
+            for (int j=0;j<26;++j){
+            if ( i == alphabet()[j])
+                j<13?ciphertext+=g1[j]:ciphertext+=g2[j-13];
+            }
+        }
+    }
+    cout<<ciphertext;
+}
+
+/*=========3.Vignere Cipher=========*/
 void Vignere_encryption() {
     string user_msg, keyword, res;
     int key_count = 0;
@@ -107,7 +224,59 @@ void Vignere_decryption() {
     cout << "The cipherd message is: " << res << "\n";
 
 }
-
+/*=========4.Baconian Cipher=========*/
+void Baconian_Cipher(string text) {
+    string ciphertext;
+    text=upper_case(text);
+    for (char i : text) {
+        string cipherchar,indexes;
+        for (int j = 0; j < 26; ++j) {
+            if (i == alphabet()[j]) {
+                for (int x = 0; x < 5; ++x) {
+                    if (j % 2 == 0)
+                        indexes += 'a';
+                    else
+                        indexes += 'b';
+                    j /= 2; 
+                }
+                for (int i=5;i>=0;--i){
+                    cipherchar+=indexes[i];
+                }
+                ciphertext += cipherchar+' ';
+                break;
+            }
+        }
+    }
+    cout << ciphertext;
+}
+void Baconian_Decipher(string text) {
+    string plaintext;
+    string alpha = alphabet();
+    text=removespace(text);
+    text=lower_case(text);
+    for(char i : text){
+        if(i!='a' && i!='b'){
+            cout<<"Please Enter A Valid Baconian Cipher\n";
+            break;
+        }
+    }
+    for (size_t i = 0; i < text.length(); i += 5) {
+        string cipherchar = text.substr(i, 5);
+        int index = 0;
+        for (int j = 0; j < 5; ++j) {
+            index *= 2;
+            if (cipherchar[j] == 'b') {
+                index += 1;
+            }
+        }
+        
+        char plainchar = alpha[index];
+        plaintext += plainchar;
+    }
+    
+    cout<<plaintext;
+    
+}
 
 
 
