@@ -1264,7 +1264,7 @@ void Decipher() {
                 continue;
             }
 
-            if (!isNotEmpty(input) || !isdigit(input[0]) || (input[0] >= '9')) {
+            if (!isNotEmpty(input) || !isdigit(input[0]) || (input[0] > '9')) {
                 cout << "Invalid input. Please enter a number in the range[0-9]." << endl;
                 cout << "Insert a valid number: ";
                 continue;
