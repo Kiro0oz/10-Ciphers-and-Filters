@@ -587,6 +587,176 @@ string Morse_code_Decryption() {
     return result; // Return the decrypted text
 }
 
+/*=====7.Polybius Square=====*/
+
+/*Takes a letter as input and returns a tuple of two integers representing the coordinates
+of that letter in a Polybius square.*/
+tuple<int , int> Table(char letter){
+    if (letter >= 65 and letter <=69){
+        return {0 , letter - 65} ;
+    }
+    if (letter >= 70 and letter <=75){
+        if (letter == 'J'){
+            letter = 'I' ;
+        }
+        if (letter == 'K'){
+            letter = 'J' ;
+        }
+        return {1 , letter - 65 - 5 * 1} ;
+    }
+    if (letter >= 76 and letter <=80){
+        return {2 , letter - 66 - 5 * 2} ;
+    }
+    if (letter >= 81 and letter <=85){
+        return {3 , letter - 66 - 5 * 3} ;
+    }
+    if (letter >= 86 and letter <=90){
+        return {4 , letter - 66 - 5 * 4} ;
+    }
+}
+
+/* Takes two integers x and y representing the coordinates in a Polybius square
+and returns the corresponding letter*/
+char Getletter(int x , int y){
+    if (x == 0 and y >=0 and y <=4){
+        return 65 + y ;
+    }
+    if (x == 1 and y >=0 and y <=4){
+        if (y == 4){
+            return 65 + y + 5 * 1 + 1 ;
+        }else {
+            return 65 + y + 5 * 1;
+        }
+    }
+    if (x == 2 and y >=0 and y <=4){
+        return 65 + y + 5 * 2 + 1;
+    }
+    if (x == 3 and y >=0 and y <=4){
+        return 65 + y + 5 * 3 + 1;
+    }
+    if (x == 4 and y >=0 and y <=4){
+        return 65 + y + 5 * 4 + 1;
+    } else {
+        return 0 ;
+    }
+}
+
+bool isValidKey(const string& key) {
+    if (key.empty()) {
+        return false;  // Key should not be empty
+    }
+
+    istringstream iss(key);
+    int num;
+    while (iss >> num) {
+        if (num < 1 || num > 5) {
+            return false;  // Each number should be in the range [1-5]
+        }
+    }
+
+    return true;
+}
+void Polybius_Encryption() {
+    while (true) {
+        string message, result, number_enter;
+        int x, y;
+        vector<int> list;
+
+        cout << "* Enter your plain text: " << endl;
+        getline(cin, message);
+        if (!isNotEmpty(message)) {
+            cout << "Error: Please enter a non-empty message" << endl;
+            continue;
+        }
+
+        cout << "Enter a Key consisting of five numbers in range [1-5] with spaces: ";
+        getline(cin, number_enter);
+
+        if (!isValidKey(number_enter)) {
+            cout << "Error: Invalid key, Please Try Again." << endl;
+            continue;
+        }
+
+        istringstream iss(number_enter);
+        int num;
+        while (iss >> num) {
+            list.push_back(num); // Add each number to the list
+        }
+
+        for (int i = 0; i < message.length(); i++) {
+            if (islower(message[i])) {
+                message[i] = toupper(message[i]);
+            }
+            if (message[i] >= 'A' && message[i] <= 'Z') {
+                tie(x, y) = Table(message[i]);
+                result += to_string(list[x]);
+                result += to_string(list[y]);
+            } else {
+                result += message[i];
+            }
+        }
+
+        cout << "Encrypted Text: " << result << "\n";
+        break;
+    }   
+}
+bool isNumeric(const string& str) {
+    return str.find_first_not_of("0123456789") == string::npos;
+}
+void Polybius_Decryption(){
+    while(true){
+        string message , result , x ,y , number , number_enter;
+        int counter = 0 , posx , posy ;
+        vector<string>lst ;
+        cout << "* Enter your Encryped Text: " << endl;
+        getline(cin, message);
+        if (!isNotEmpty(message) || !isNumeric(message)){
+            cout << "Error: Please enter a valid message" << endl;
+            continue;
+        }
+        cout << "Enter a Key consisting of five numbers in range [1-5] with spaces: ";
+        for (int i = 0 ; i < 5 ; i++){
+            cin >> number_enter ;
+            lst.push_back(number_enter) ;
+        }
+        cin.ignore();
+        for (int i = 0; i < message.length() ; i++){
+            if (counter == 2){
+                // Separate x and y
+                x = string(1 ,number[0]) ;
+                y = string(1 ,number[1]) ;
+                // Find the x and y in the vector
+                auto fnd1 = find(lst.begin() , lst.end() , x) ;
+                auto fnd2 = find(lst.begin() , lst.end() , y) ;
+                // Get the position of x and y in the vector
+                posx = fnd1 - lst.begin() ;
+                posy = fnd2 - lst.begin() ;
+                result += Getletter(posx , posy) ;
+                counter = 0 ;
+                number = "" ;
+            }
+            if (message[i] != ' ') {
+                number += message[i];
+                counter++;
+            }
+            else {
+                result += " " ;
+            }
+        }
+        // Here we add the last x and y because there if there is no space in the end of the ciphered message
+        if (not isspace(message[message.length() - 1])) {
+            x = string(1, number[0]);
+            y = string(1, number[1]);
+            auto fnd1 = find(lst.begin(), lst.end(), x);
+            auto fnd2 = find(lst.begin(), lst.end(), y);
+            posx = fnd1 - lst.begin();
+            posy = fnd2 - lst.begin();
+            result += Getletter(posx, posy);
+        }
+        cout  << "* Decryped Text : "  << result << "\n";
+        break;
+    }
+}
 
 
 /*=========8.Xor=========*/
@@ -793,8 +963,8 @@ int main() {
             getline(cin, input);
 
             if (input.size() != 1 || input[0] !='0' && input[0] != '1' && input[0] !='2' && input[0] != '3' &&
-                                     input[0] != '4' && input[0] !='5' && input[0] != '6' &&input[0] != '7' &&
-                                     input[0] !='8' && input[0] != '9') {
+                input[0] != '4' && input[0] !='5' && input[0] != '6' &&input[0] != '7' &&
+                input[0] !='8' && input[0] != '9') {
                 cout << "Invalid input. Please Try Again." << endl;
                 continue;
             }
@@ -838,7 +1008,7 @@ int main() {
 
             else if (n == '6') {
                 cout << "> Polybius Cipher <\n";
-                // func
+                Polybius_Encryption();
             }
 
             else if(n == '7') {
@@ -886,7 +1056,7 @@ int main() {
             getline(cin, input);
 
             if (input.size() != 1 || input[0] !='0' && input[0] != '1' && input[0] !='2' && input[0] != '3' &&
-                                     input[0] != '4' && input[0] !='5' && input[0] != '6' &&input[0] != '7' && input[0] !='8' && input[0] != '9') {
+                input[0] != '4' && input[0] !='5' && input[0] != '6' &&input[0] != '7' && input[0] !='8' && input[0] != '9') {
                 cout << "Invalid input. Please Try Again." << endl;
                 continue;
             }
@@ -930,7 +1100,7 @@ int main() {
 
             else if (n == '6') {
                 cout << "> Polybius Decipher <\n";
-                // func
+                Polybius_Decryption();
             }
 
             else if(n == '7') {
