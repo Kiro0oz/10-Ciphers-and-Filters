@@ -55,7 +55,12 @@ void invalid(string text){
 void Affine_Cipher(string text){
     int a,b;
     cout<<"Enter a,b for Encryption Equation\n";
-    cin>>a>>b;
+    cout << "a = ";
+    cin>>a;
+    cin.ignore();
+    cout << "b = ";
+    cin>>b;
+    cin.ignore();
     string ciphertext;
     text=upper_case(text);
     for (char i:text){
@@ -70,7 +75,12 @@ void Affine_Cipher(string text){
 void Affine_Decipher(string text){
     int c,b;
     cout<<"Enter c ,b for Decryption Equation\n";
-    cin>>c>>b;
+    cout << "c = ";
+    cin>>c;
+    cin.ignore();
+    cout << "b = ";
+    cin>>b;
+    cin.ignore();
     string plaintext;
     text=upper_case(text);
     int D;
@@ -89,9 +99,193 @@ void Affine_Decipher(string text){
     cout<< "The Decrypted text is: "<<plaintext;
 }
 
+/*=========1.Route Cipher=========*/
+void EncryptionRoute() {
+
+    string user_txt, new_user_txt, user_txt2, cipher_txt;
+    int key, counter = 0, rows;
+    
+
+    cout << "Please enter your text: ";
+    while (true) {
+        getline(cin, user_txt);
+        user_txt2.clear();
+
+        for (int i = 0 ; i <= user_txt.length(); i++) {
+            if (isalpha(user_txt[i])) {
+                user_txt2 += user_txt[i];
+            }
+        }
+
+        if (user_txt2.empty() || user_txt2.length() <= 1) {
+            cout << "Error! Please enter your text: ";
+            continue;
+        }
+        break;
+    }
+
+    cout << "Enter number of columns (Key): ";
+    while (true)
+    {
+        cin >> key;
+        if(key <= 1 || key >= 9) {
+            cout << "Error! Please enter number of columns (Key): ";
+            continue;
+        }
+        break;
+    }
+    cin.ignore();
+
+    for (int i = 0; i < user_txt2.length(); i++) {
+        if (isalpha(user_txt2[i])) {
+            new_user_txt += toupper(user_txt2[i]);
+        }
+    }
+
+    rows = ceil((double)new_user_txt.length() / (double)key);
+
+    string matrix[rows][key];
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < key; j++) {
+            matrix[i][j] = new_user_txt[counter];
+            counter++;
+
+            if (counter > new_user_txt.length()) {
+                matrix[i][j] = 'X';
+            }
+        }
+    }
+
+    int n1 = 0, n2 = 1;
+    while (true) {
+        for (int i = 0; i < rows - n1; i++) {
+            cipher_txt += matrix[i][key - n2];
+        }
+        if (cipher_txt.length() >= rows * key) {
+            break;
+        }
+
+        for (int i = key - n2 - 1; i >= n2 - 1; i--) {
+            cipher_txt += matrix[rows - n2][i];
+        }
+        if (cipher_txt.length() >= rows * key) {
+            break;
+        }
+
+        for (int i = rows - 1 - n2; i >= n1; i--) {
+            cipher_txt += matrix[i][n1];
+        }
+        if (cipher_txt.length() >= rows * key) {
+            break;
+        }
+
+        for (int i = n2; i < key - n2 - 1; i++) {
+            cipher_txt += matrix[n1][i];
+        }
+        if (cipher_txt.length() >= rows * key) {
+            break;
+        }
+
+        n2++;
+        n1++;
+    }
+
+    cout << "Your Text: " <<  new_user_txt << "\n";
+    cout << "Encryption Text: " << cipher_txt << "\n";
+
+}
+
+void DecryptionRoute() {
+    string user_txt, user_txt2;
+    int key, counter = 0,rows;
+
+    cout << "Please enter your encrypted text: ";
+    while (true) {
+        getline(cin, user_txt);
+        user_txt2.clear();
+
+        for (int i = 0 ; i <= user_txt.length(); i++) {
+            if (isalpha(user_txt[i])) {
+                user_txt2 += user_txt[i];
+            }
+        }
+
+        if (user_txt2.empty() || user_txt2.length() <= 1) {
+            cout << "Error! Please enter your text: ";
+            continue;
+        }
+        break;
+    }
+
+
+    cout << "Enter number of columns (Key): ";
+    while (true)
+    {
+        cin >> key;
+        if(key <= 1 || key >= 9) {
+            cout << "Error! Please enter number of columns (Key): ";
+            continue;
+        }
+        break;
+    }
+    cin.ignore();
+
+    rows = ceil((double)user_txt2.length() / (double)key);
+    int n1 = 0, n2 = 1;
+    string matrix[rows][key];
+
+    while (true) {
+        for (int i = 0; i < rows - n1; i++) {
+            matrix[i][key - n2] = user_txt2[counter];
+            counter++;
+        }
+
+        if (counter > user_txt2.length() - 1) {
+            break;
+        }
+
+        for (int i = key - n2 - 1; i >= n2 - 1; i--) {
+            matrix[rows - n2][i] = user_txt2[counter];
+            counter++;
+        }
+
+        if (counter > user_txt2.length() - 1) {
+            break;
+        }
+
+        for (int i = rows - 1 - n2; i >= n1; i--) {
+            matrix[i][n1] = user_txt2[counter];
+            counter++;
+        }
+
+        if (counter > user_txt2.length() - 1) {
+            break;
+        }
+
+        for (int i = n2; i < key - n2 - 1; i++) {
+            matrix[n1][i] = user_txt2[counter];
+            counter++;
+        }
+
+        if (counter > user_txt2.length() - 1) {
+            break;
+        }
+        n2++;
+        n1++;
+    }
+
+    cout << "Encrypted text: " << user_txt2 << "\n";
+    cout << "Deciphered message: ";
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < key; j++) {
+            cout << matrix[i][j];
+        }
+    }
+    
+}
 
 /*=========2.Atbash Cipher=========*/
-void Atbash_Cipher_V1(string text){
+void Atbash_Cipher(string text){
     string ciphertext;
     string cipheredchars;
     text=upper_case(text);
@@ -108,9 +302,9 @@ void Atbash_Cipher_V1(string text){
             }
         }
     }
-    cout<<ciphertext;
+    cout<<"The cipher text: " <<ciphertext;
 }
-void Atbash_Cipher_V2(string text){
+void Atbash_Decipher(string text){
     string g1;
     string g2;
     string ciphertext;
@@ -132,7 +326,7 @@ void Atbash_Cipher_V2(string text){
             }
         }
     }
-    cout<<ciphertext;
+    cout<< "The plain text: " <<ciphertext;
 }
 
 /*=========3.Vignere Cipher=========*/
@@ -178,8 +372,6 @@ void Vignere_encryption() {
     cout << "The cipherd message is: " << res << "\n";
 
 }
-
-
 void Vignere_decryption() {
     string user_msg, keyword, res;
     int key_count = 0;
@@ -225,6 +417,7 @@ void Vignere_decryption() {
     cout << "The cipherd message is: " << res << "\n";
 
 }
+
 /*=========4.Baconian Cipher=========*/
 void Baconian_Cipher(string text) {
     string ciphertext;
@@ -248,7 +441,7 @@ void Baconian_Cipher(string text) {
             }
         }
     }
-    cout << ciphertext;
+    cout << "Encoded message: " << ciphertext;
 }
 void Baconian_Decipher(string text) {
     string plaintext;
@@ -275,14 +468,9 @@ void Baconian_Decipher(string text) {
         plaintext += plainchar;
     }
     
-    cout<<plaintext;
+    cout << "Decode message: " <<plaintext;
     
 }
-
-
-
-
-
 
 
 /*=========5.Simple Substitution=========*/
@@ -368,10 +556,10 @@ void Encryption() {
         }
     }
     // Get the cipher lowercase text
-    string lower_res;
-    for(int i = 0; i < res.length();i++) {
-        lower_res += tolower(res[i]);
-    }
+    string lower_res = lower_case(res);
+    // for(int i = 0; i < res.length();i++) {
+    //     lower_res += tolower(res[i]);
+    // }
 
     cout <<"\nThe Plain Text is: " << user_msg;
     cout <<"\nThe Cipher Text is: " << lower_res;
@@ -432,10 +620,10 @@ void Decryption() {
             continue;
         }
     }
-    string lower_res;
-    for(int i = 0; i < res.length();i++) {
-        lower_res += tolower(res[i]);
-    }
+    string lower_res = lower_case(res);
+    // for(int i = 0; i < res.length();i++) {
+    //     lower_res += tolower(res[i]);
+    // }
     cout << "\nThe Encryption Text is: " << user_txt;
     cout << "\nThe Plain Text is: " << lower_res;
 }
@@ -539,7 +727,7 @@ string Morse_code_Decryption() {
 
     string echar_morse, result, message;
     int u = 0, count_space = 0;
-    cout << "Enter Your Encrypted Text:\n";
+    cout << "Enter Your Encrypted Text: ";
     getline(cin, message);
 
     // Check if the input is valid Morse code
@@ -584,7 +772,7 @@ string Morse_code_Decryption() {
     result += getcode(echar_morse);
     result += "\n";
 
-    cout << "Decrypted Text:\n" << result;
+    cout << "Decrypted Text: " << result;
     return result; // Return the decrypted text
 }
 
@@ -663,10 +851,11 @@ void Polybius_Encryption() {
         int x, y;
         vector<int> list;
 
-        cout << "* Enter your plain text: " << endl;
+        cout << "* Enter your plain text: ";
         getline(cin, message);
         if (!isNotEmpty(message)) {
-            cout << "Error: Please enter a non-empty message" << endl;
+            cout << "Error: Please enter a non-empty message: ";
+
             continue;
         }
 
@@ -709,10 +898,10 @@ void Polybius_Decryption(){
         string message , result , x ,y , number , number_enter;
         int counter = 0 , posx , posy ;
         vector<string>lst ;
-        cout << "* Enter your Encryped Text: " << endl;
+        cout << "* Enter your Encryped Text: ";
         getline(cin, message);
         if (!isNotEmpty(message) || !isNumeric(message)){
-            cout << "Error: Please enter a valid message" << endl;
+            cout << "Error: Please enter a valid message: ";
             continue;
         }
         cout << "Enter a Key consisting of five numbers in range [1-5] with spaces: ";
@@ -819,7 +1008,7 @@ string decipherText(const string& hexMsg, const string& key) {
 void xorcipher() {
     string SecretKey;
     string plainText;
-    cout << "* Enter Your Plain Text : " << endl;
+    cout << "* Enter Your Plain Text : ";
     getline(cin, plainText);
     do {
         SecretKey = getNonEmptyInput("Enter The Secret Key (letters only): ");
@@ -827,8 +1016,8 @@ void xorcipher() {
     string Ciphered_Textt = xor_cipher(plainText, SecretKey);
     string Ciphered_TextH = stringToHex(Ciphered_Textt);
 
-    cout << "Ciphered Message (Text) : " << Ciphered_Textt << endl;
-    cout << "Ciphered Message (Hex) : " << Ciphered_TextH << endl;
+    cout << "Ciphered Message (Text) : " << Ciphered_Textt ;
+    cout << "Ciphered Message (Hex) : " << Ciphered_TextH ;
 }
 //a function to check if a string is a valid Hexadecimal representation
 
@@ -917,6 +1106,235 @@ string decrypt_Rail_Fence(string ciphertext) {
     return decryptedtext;
 }
 
+
+void Cipher() {
+    string input;
+    char n;
+    cout << "Which Cipher do you like to choose?" << endl;
+            cout << "\n==========================\n";
+            cout << "0) Affine\n";
+            cout << "1) Route\n";
+            cout << "2) Atbash\n";
+            cout << "3) Vigenere\n";
+            cout << "4) Baconian\n";
+            cout << "5) Simple Substitution\n";
+            cout << "6) Polybius Square\n";
+            cout << "7) Morse Code\n";
+            cout << "8) Xor\n";
+            cout << "9) Rail-Fence\n";
+            cout << "===========================\n";
+            cout << "Choose an option : ";
+        while(true){
+            getline(cin, input);
+
+            if (input.size() != 1 || input[0] !='0' && input[0] != '1' && input[0] !='2' && input[0] != '3' &&
+                input[0] != '4' && input[0] !='5' && input[0] != '6' &&input[0] != '7' &&
+                input[0] !='8' && input[0] != '9') {
+                cout << "Invalid input. Please Try Again." << endl;
+                cout << "Insert a valid number: ";
+                continue;
+            }
+            
+            if (!isNotEmpty(input) || !isdigit(input[0]) || ( input[0] > '9')) {
+                cout << "Invalid input. Please enter a number in the range[0-9]" << endl;
+                continue;
+            }
+
+            n = input[0];
+
+            if(n == '0') {
+                string user_txt;
+                cout << "> Affine Cipher <\n";
+                cout << "Please enter your text: ";
+                getline(cin, user_txt);
+                Affine_Cipher(user_txt);
+                break;
+            }
+
+            else if (n == '1') {
+                cout << "> Route Cipher <\n";
+                EncryptionRoute();
+                break;
+            }
+
+            else if(n == '2') {
+                string user_txt;
+                cout << "> Atbash Cipher <\n";
+                cout << "Please enter your text: ";
+                getline(cin, user_txt);
+                Atbash_Cipher(user_txt);
+                break;
+            }
+
+            else if (n == '3') {
+                cout << "> Vignere Cipher <\n";
+                Vignere_encryption();
+                break;
+            }
+
+            else if(n == '4') {
+                string user_txt;
+                cout << "> Baconian Cipher <\n";
+                cout << "Please enter your text: ";
+                getline(cin, user_txt);
+                Baconian_Cipher(user_txt);
+                break;
+            }
+
+            else if (n == '5') {
+                cout << "> Simple Substitution Cipher <\n";
+                Encryption();
+                break;
+            }
+
+            else if (n == '6') {
+                cout << "> Polybius Cipher <\n";
+                Polybius_Encryption();
+                break;
+            }
+
+            else if(n == '7') {
+                cout << "> Morse Code Cipher <\n";
+                string message;
+                cout <<  "* Enter Your Plain Text : ";
+                getline(cin , message);
+                cout<< "Encrypted Text: " << Morse_code_Encryption(message);
+                break;
+            }
+
+            else if (n == '8') {
+                cout << "> Xor Cipher <\n";
+                xorcipher();
+                break;
+            }
+
+            else if (n == '9') {
+                cout << "> Rail-Fence Cipher <\n";
+                string text;
+                cout << "* Enter Your Plain Text : " << "\n";
+                getline(cin, text);
+                cout << "Encrypted Text: " << encrypt_Rail_Fence(text) << "\n";
+                break;
+            }  else {
+                cout << "Invalid: please Enter a number in range[0-9].." << endl;
+                continue;
+            }
+        }
+}
+
+void Decipher() {
+    string input;
+    char n;
+            cout << "Which Decipher do you like to choose?" << endl;
+            cout << "\n==========================\n";
+            cout << "0) Affine\n";
+            cout << "1) Route\n";
+            cout << "2) Atbash\n";
+            cout << "3) Vigenere\n";
+            cout << "4) Baconian\n";
+            cout << "5) Simple Substitution\n";
+            cout << "6) Polybius Square\n";
+            cout << "7) Morse Code\n";
+            cout << "8) Xor\n";
+            cout << "9) Rail-Fence\n";
+            cout << "===========================\n";
+            cout << "Choose an option : ";
+            getline(cin, input);
+        while(true){
+            if (input.size() != 1 || input[0] !='0' && input[0] != '1' && input[0] !='2' && input[0] != '3' &&
+                input[0] != '4' && input[0] !='5' && input[0] != '6' &&input[0] != '7' && input[0] !='8' && input[0] != '9') {
+                cout << "Invalid input. Please Try Again." << endl;
+                continue;
+            }
+
+            if (!isNotEmpty(input) || !isdigit(input[0]) || (input[0] >= '9')) {
+                cout << "Invalid input. Please enter a number in the range[0-9]." << endl;
+                cout << "Insert a valid number: ";
+                continue;
+            }
+
+            n = input[0];
+
+            if(n == '0') {
+                string user_txt;
+                cout << "> Affine Decipher <\n";
+                cout << "Please enter your encrypted text: ";
+                getline(cin, user_txt);
+                Affine_Decipher(user_txt);
+                break;
+            }
+
+            else if (n == '1') {
+                cout << "> Route Decipher <\n";
+                DecryptionRoute();
+                break;
+            }
+
+            else if(n == '2') {
+                string user_txt;
+                cout << "> Atbash Cipher <\n";
+                cout << "Please enter your encrypted text: ";
+                getline(cin, user_txt);
+                Atbash_Decipher(user_txt);
+                break;
+            }
+
+            else if (n == '3') {
+                cout << "> Vignere Decipher <\n";
+                Vignere_decryption();
+                break;
+            }
+
+            else if(n == '4') {
+                string user_txt;
+                cout << "> Baconian Cipher <\n";
+                cout << "Please enter your encrypted text: ";
+                getline(cin, user_txt);
+                Baconian_Decipher(user_txt);
+                break;
+            }
+
+            else if (n == '5') {
+                cout << "> Simple Substitution Decipher <\n";
+                Decryption();
+                break;
+            }
+
+            else if (n == '6') {
+                cout << "> Polybius Decipher <\n";
+                Polybius_Decryption();
+                break;
+            }
+
+            else if(n == '7') {
+                cout << "> Morse Code Decipher <\n";
+                Morse_code_Decryption();
+                break;
+            }
+
+            else if (n == '8') {
+                cout << "> Xor Decipher <\n";
+                xordecipher();
+                break;
+            }
+
+            else if (n == '9') {
+                cout << "> Rail-Fence Decipher <\n";
+                string text;
+                cout << "* Enter Your Encrypted Text : " << endl;
+                getline(cin, text);
+                cout <<"Decrypted Text: " << decrypt_Rail_Fence(text) << endl;
+                break;
+            }
+
+            else {
+                cout << "Invalid: please Enter a number in range[0-9].." << endl;
+                continue;
+            }
+        }    
+
+}       
+
 //Main Program:
 int main() {
     cout << "--Welcome User--" << endl;
@@ -947,186 +1365,11 @@ int main() {
         choice = input[0];
 
         if (choice == '1') {
-            cout << "Which Cipher do you like to choose?" << endl;
-            cout << "\n==========================\n";
-            cout << "0) Affine\n";
-            cout << "1) Route\n";
-            cout << "2) Atbash\n";
-            cout << "3) Vigenere\n";
-            cout << "4) Baconian\n";
-            cout << "5) Simple Substitution\n";
-            cout << "6) Polybius Square\n";
-            cout << "7) Morse Code\n";
-            cout << "8) Xor\n";
-            cout << "9) Rail-Fence\n";
-            cout << "===========================\n";
-            cout << "Choose an option : ";
-            getline(cin, input);
-
-            if (input.size() != 1 || input[0] !='0' && input[0] != '1' && input[0] !='2' && input[0] != '3' &&
-                input[0] != '4' && input[0] !='5' && input[0] != '6' &&input[0] != '7' &&
-                input[0] !='8' && input[0] != '9') {
-                cout << "Invalid input. Please Try Again." << endl;
-                continue;
-            }
-            
-            if (!isNotEmpty(input) || !isdigit(input[0]) || (input[0] <= '0' || input[0] > '9')) {
-                cout << "Invalid input. Please enter a number in the range[0-9]." << endl;
-                continue;
-            }
-
-            n = input[0];
-
-            if(n == '0') {
-                cout << "> Affine Cipher <\n";
-                // func
-            }
-
-            else if (n == '1') {
-                cout << "> Route Cipher <\n";
-                // func
-            }
-
-            else if(n == '2') {
-                cout << "> Atbash Cipher <\n";
-                // func
-            }
-
-            else if (n == '3') {
-                cout << "> Vignere Cipher <\n";
-                Vignere_encryption();
-            }
-
-            else if(n == '4') {
-                cout << "> Baconian Cipher <\n";
-                // func
-            }
-
-            else if (n == '5') {
-                cout << "> Simple Substitution Cipher <\n";
-                Encryption();
-            }
-
-            else if (n == '6') {
-                cout << "> Polybius Cipher <\n";
-                Polybius_Encryption();
-            }
-
-            else if(n == '7') {
-                cout << "> Morse Code Cipher <\n";
-                string message;
-                cout <<  "* Enter Your Plain Text : " << endl;
-                getline(cin , message);
-                cout<< "Encrypted Text: " << Morse_code_Encryption(message);
-            }
-
-            else if (n == '8') {
-                cout << "> Xor Cipher <\n";
-                xordecipher();
-
-            }
-
-            else if (n == '9') {
-                cout << "> Rail-Fence Cipher <\n";
-                string text;
-                cout << "* Enter Your Plain Text : " << "\n";
-                getline(cin, text);
-                cout << "Encrypted Text: " << encrypt_Rail_Fence(text) << "\n";
-            }
-
-            else {
-                cout << "Invalid: please Enter a number in range[0-9].." << endl;
-                continue;
-            }
-
+            Cipher();
+            continue;
         } else if (choice == '2') {
-            cout << "Which Decipher do you like to choose?" << endl;
-            cout << "\n==========================\n";
-            cout << "0) Affine\n";
-            cout << "1) Route\n";
-            cout << "2) Atbash\n";
-            cout << "3) Vigenere\n";
-            cout << "4) Baconian\n";
-            cout << "5) Simple Substitution\n";
-            cout << "6) Polybius Square\n";
-            cout << "7) Morse Code\n";
-            cout << "8) Xor\n";
-            cout << "9) Rail-Fence\n";
-            cout << "===========================\n";
-            cout << "Choose an option : ";
-            getline(cin, input);
-
-            if (input.size() != 1 || input[0] !='0' && input[0] != '1' && input[0] !='2' && input[0] != '3' &&
-                input[0] != '4' && input[0] !='5' && input[0] != '6' &&input[0] != '7' && input[0] !='8' && input[0] != '9') {
-                cout << "Invalid input. Please Try Again." << endl;
-                continue;
-            }
-
-            if (!isNotEmpty(input) || !isdigit(input[0]) || (input[0] <= '0' || input[0] >= '9')) {
-                cout << "Invalid input. Please enter a number in the range[0-9]." << endl;
-                continue;
-            }
-
-            n = input[0];
-
-            if(n == '0') {
-                cout << "> Affine Decipher <\n";
-                // func
-            }
-
-            else if (n == '1') {
-                cout << "> Route Decipher <\n";
-                // func
-            }
-
-            else if(n == '2') {
-                cout << "> Atbash Decipher <\n";
-                // func
-            }
-
-            else if (n == '3') {
-                cout << "> Vignere Decipher <\n";
-                Vignere_decryption();
-            }
-
-            else if(n == '4') {
-                cout << "> Baconian Decipher <\n";
-                // func
-            }
-
-            else if (n == '5') {
-                cout << "> Simple Substitution Decipher <\n";
-                Decryption();
-            }
-
-            else if (n == '6') {
-                cout << "> Polybius Decipher <\n";
-                Polybius_Decryption();
-            }
-
-            else if(n == '7') {
-                cout << "> Morse Code Decipher <\n";
-                Morse_code_Decryption();
-            }
-
-            else if (n == '8') {
-                cout << "> Xor Decipher <\n";
-                xordecipher();
-
-            }
-
-            else if (n == '9') {
-                cout << "> Rail-Fence Decipher <\n";
-                string text;
-                cout << "* Enter Your Encrypted Text : " << endl;
-                getline(cin, text);
-                cout <<"Decrypted Text: " << decrypt_Rail_Fence(text) << endl;
-            }
-
-            else {
-                cout << "Invalid: please Enter a number in range[0-9].." << endl;
-                continue;
-            }
+            Decipher();
+            continue;
         } else if (choice == '3') {
             cout << "Bye!!";
             break;
