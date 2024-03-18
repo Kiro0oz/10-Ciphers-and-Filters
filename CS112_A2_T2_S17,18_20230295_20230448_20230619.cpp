@@ -11,7 +11,7 @@ Emails: Kiroadel113@gmail.com
         emanemadfarghaly@gmail.com
 ID 1: 20230295- ciphers=>1,3,5
 ID 2: 20230448- ciphers=>6,7,8
-ID 3: 20230619- ciphers=>0,2,4
+ID 3: 20230619- ciphers=>0,2,4,9
 
 */
 
@@ -53,6 +53,7 @@ void invalid(string text){
 
 /*=========0.Affine Cipher=========*/
 void Affine_Cipher(string text){
+    invalid(text);
     int a,b;
     cout<<"Enter a,b for Encryption Equation\n";
     cout << "a = ";
@@ -73,6 +74,7 @@ void Affine_Cipher(string text){
     
 }
 void Affine_Decipher(string text){
+    invalid(text);
     int c,b;
     cout<<"Enter c ,b for Decryption Equation\n";
     cout << "c = ";
@@ -285,7 +287,8 @@ void DecryptionRoute() {
 }
 
 /*=========2.Atbash Cipher=========*/
-void Atbash_Cipher(string text){
+void Atbash_Cipher_V1(string text){
+    invalid(text);
     string ciphertext;
     string cipheredchars;
     text=upper_case(text);
@@ -302,9 +305,10 @@ void Atbash_Cipher(string text){
             }
         }
     }
-    cout<<"The cipher text: " <<ciphertext;
+    cout<<ciphertext;
 }
-void Atbash_Decipher(string text){
+void Atbash_Cipher_V2(string text){
+    invalid(text);
     string g1;
     string g2;
     string ciphertext;
@@ -326,7 +330,7 @@ void Atbash_Decipher(string text){
             }
         }
     }
-    cout<< "The plain text: " <<ciphertext;
+    cout<<ciphertext;
 }
 
 /*=========3.Vignere Cipher=========*/
@@ -420,6 +424,7 @@ void Vignere_decryption() {
 
 /*=========4.Baconian Cipher=========*/
 void Baconian_Cipher(string text) {
+    invalid(text);
     string ciphertext;
     text=upper_case(text);
     for (char i : text) {
@@ -444,6 +449,7 @@ void Baconian_Cipher(string text) {
     cout << "Encoded message: " << ciphertext;
 }
 void Baconian_Decipher(string text) {
+    invalid(text);
     string plaintext;
     string alpha = alphabet();
     text=removespace(text);
@@ -1052,16 +1058,12 @@ void xordecipher() {
 
 // Function to encrypt text using Rail Fence Cipher
 string encrypt_Rail_Fence(string text) {
+    invalid(text);
     string ciphertext;
     // store characters in 3 rails
     string rail_arr[3];
-
-    // Iterate on each character in the text to remove spaces and convert to lowercase
-    for (int i = 0; i < text.length(); ++i) {
-        if (isspace(text[i]))
-            text.erase(text.begin() + i);
-        text[i] = tolower(char(text[i]));
-    }
+    text=removespace(text);
+    text=lower_case(text);
 
     int nrow = 0;
     bool nextrow = false; // Flag to determine if moving up or down
@@ -1082,6 +1084,10 @@ string encrypt_Rail_Fence(string text) {
 
 // Function to decrypt text encrypted using Rail Fence Cipher
 string decrypt_Rail_Fence(string ciphertext) {
+    invalid(ciphertext);
+    ciphertext=removespace(ciphertext);
+    ciphertext=lower_case(ciphertext);
+        
     string decryptedtext(ciphertext.length(), ' '); // Initialize decrypted text with spaces
     int index = 0; // Index for iterating through ciphertext characters
 
@@ -1158,11 +1164,22 @@ void Cipher() {
             }
 
             else if(n == '2') {
-                string user_txt;
+               string user_txt;
+                int Version;
                 cout << "> Atbash Cipher <\n";
+                cout << "Choose the Version you want to encrypt with: 1)Version1 2)Version2\n";
+                cin >>Version;
                 cout << "Please enter your text: ";
                 getline(cin, user_txt);
-                Atbash_Cipher(user_txt);
+                getline(cin,user_txt);
+                if (Version==1){
+                    cout<<"The Cipher Text is: ";
+                    Atbash_Cipher_V1(user_txt);}
+                else if (Version==2){
+                    cout<<"The Cipher Text is: ";
+                    Atbash_Cipher_V2(user_txt);}
+                else
+                    cout<<"Please Enter 1 or 2 for the Version";
                 break;
             }
 
@@ -1272,10 +1289,21 @@ void Decipher() {
 
             else if(n == '2') {
                 string user_txt;
+                int Version;
                 cout << "> Atbash Cipher <\n";
-                cout << "Please enter your encrypted text: ";
+                cout << "Choose the Version you want to decrypt with: 1)Version1 2)Version2\n";
+                cin >>Version;
+                cout << "Please enter your text: ";
                 getline(cin, user_txt);
-                Atbash_Decipher(user_txt);
+                getline(cin,user_txt);
+                if (Version==1){
+                    cout<<"The Plain Text is: ";
+                    Atbash_Cipher_V1(user_txt);}
+                else if (Version==2){
+                    cout<<"The Plain Text is: ";
+                    Atbash_Cipher_V2(user_txt);}
+                else
+                    cout<<"Please Enter 1 or 2 for the Version";
                 break;
             }
 
