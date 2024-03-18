@@ -1029,7 +1029,7 @@ void xordecipher() {
     while (true) {
         string Hexmsg;
         string SecretKey;
-        cout << "* Enter Your Encrypted Message : " << endl;
+        cout << "* Enter Your Encrypted Message ignoring spaces : " << endl;
         getline(cin, Hexmsg);
 
         //validation for Hex input.
