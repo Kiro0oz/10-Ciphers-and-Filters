@@ -8,9 +8,9 @@
 using namespace std;
 
 
-void garyScale() {
+void GrayScale() {
     // Read Image
-    cout << "Enter your image with extention: ";
+    cout << "Enter your target image name with extention: ";
     string filename;
     cin >> filename;
     Image img(filename);
@@ -43,7 +43,7 @@ void garyScale() {
 
 void Black_and_White() {
         // Read Image
-        cout << "Enter your image with extention: ";
+        cout << "Enter your target image name with extention: ";
         string filename;
         cin >> filename;
         Image img(filename);
@@ -85,7 +85,7 @@ void Filters() {
     while(true) {
         cin >> ch;
         if(ch == '1') {
-            garyScale();
+            GrayScale();
             break;
         } else if(ch == '2') {
             Black_and_White();
