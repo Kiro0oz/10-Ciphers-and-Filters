@@ -4,6 +4,7 @@
 // Kiro => [ 1, 4, 7, 10 ]
 
 #include<bits/stdc++.h>
+#include "Image_Class.h"
 using namespace std;
 
 void Black_and_White(Image& image) {
