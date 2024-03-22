@@ -116,7 +116,7 @@ int main()
             Filters();
             break;
         } else if (op == '0') {
-            cout << "Bey!!";
+            cout << "Bye!!";
             break;
         } else {
             cout << "Error! Please insert a valid option\n";
