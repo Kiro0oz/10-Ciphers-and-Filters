@@ -1,8 +1,17 @@
-
-// Main file project
-// Noura => [ 2, 5, 8, 11 ]
-// Eman => [ 3, 6, 9, 12 ]
-// Kiro => [ 1, 4, 7, 10 ]
+/*
+FCAI – Structured Programming – 2024 - Assignment 3
+----------------------------------------------------
+File: CS112_A3_Part(1)_S17,18_20230295_20230448_20230619
+Author: Kirollos Adel Samir-S17
+        Noura Muhammad Mahmoud-S18
+        Eman Emad Abdulrahim-S18
+Emails: Kiroadel113@gmail.com
+        nouraarafa180@gmail.com
+        emanemadfarghaly@gmail.com
+ID 1: 20230295-[ 1, 4, 7, 10 ]
+ID 2: 20230448-[ 2, 5, 8, 11 ]
+ID 3: 20230619-[ 3, 6, 9, 12 ]
+*/
 
 #include <iostream>
 #include "Image_Class.h"
