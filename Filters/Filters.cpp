@@ -90,7 +90,33 @@ void Black_and_White() {
 }
 
 //====== Filter 3 Invert Image ======//
+void Invert() {
+    // Read Image
+    cout << "Enter the name of the image(with extensions) you want to apply filters on : ";
+    string filename;
+    cin >> filename;
+    Image img(filename);
 
+    // Filter
+    for (int i = 0; i < img.width; ++i)
+    {
+        for (int j = 0; j < img.height; ++j)
+        {
+            for (int k = 0; k < 3; ++k)
+            {
+                int num;
+                num=img(i,j,k);
+                img(i,j,k)=255-num;
+            }
+        }
+    }
+
+    // Save Image
+    cout << "Please Enter the name of the new filtered image\n";
+    cout << "& specify extension .jpg, .bmp, .png, .tga : ";
+    string new_fileName;
+    cin >> new_fileName;
+    img.saveImage(new_fileName);
 
 //====== Filter 4 Merge Images ======//
 void Merge() {
@@ -340,6 +366,10 @@ void Filters() {
             break;
         } else if(ch == "2") {
             Black_and_White();
+            break;
+        }
+        else if(ch == "3") {
+            Invert();
             break;
         }
         else if(ch == "4") {
