@@ -217,7 +217,100 @@ void Flip(){
 }
 
 //====== Filter 6 Rotate Image ======//
+void Rotate90(){
+    // Read Image
+    cout << "Enter the name of the image(with extensions) you want to apply filters on : ";
+    string filename;
+    cin >> filename;
+    Image img(filename);
+    Image newimg (img.height,img.width);
 
+    for (int i = 0; i < newimg.width; i++) {
+        for (int j = 1; j < newimg.height ; j++) {
+            for(int k=0;k<3;k++){
+                newimg(i,j,k) =img(j,i,k);
+            }
+
+        }
+    }
+
+    // Save Image
+    cout << "Please Enter the name of the new filtered image\n";
+    cout << "& specify extension .jpg, .bmp, .png, .tga : ";
+    string new_fileName;
+    cin >> new_fileName;
+    newimg.saveImage(new_fileName);
+}
+void Rotate180(){
+    // Read Image
+    cout << "Enter the name of the image(with extensions) you want to apply filters on : ";
+    string filename;
+    cin >> filename;
+    Image img(filename);
+    Image newimg (img.width,img.height);
+
+    for (int i = 0; i < newimg.width; i++) {
+        for (int j = 1; j < newimg.height ; j++) {
+            for(int k=0;k<3;k++){
+                newimg(i,j,k) =img(img.width-i,img.height-j,k);
+            }
+
+        }
+    }
+
+    // Save Image
+    cout << "Please Enter the name of the new filtered image\n";
+    cout << "& specify extension .jpg, .bmp, .png, .tga : ";
+    string new_fileName;
+    cin >> new_fileName;
+    newimg.saveImage(new_fileName);
+}
+void Rotate270(){
+    // Read Image
+    cout << "Enter the name of the image(with extensions) you want to apply filters on : ";
+    string filename;
+    cin >> filename;
+    Image img(filename);
+    Image newimg (img.height, img.width);
+
+    for (int i = 0; i < newimg.width; i++) {
+        for (int j = 1; j < newimg.height ; j++) {
+            for(int k=0;k<3;k++){
+                newimg(i, j, k) = img(img.width-j, i, k);
+            }
+
+        }
+    }
+
+    // Save Image
+    cout << "Please Enter the name of the new filtered image\n";
+    cout << "& specify extension .jpg, .bmp, .png, .tga : ";
+    string new_fileName;
+    cin >> new_fileName;
+    newimg.saveImage(new_fileName);
+}
+void Rotate(){
+    int deg;
+    while (true){
+        cout << "Choose The degree of rotation(90,180,270)\n";
+        cin >> deg;
+        if (deg==90){
+            Rotate90();
+            break;
+        }
+        else if (deg==180){
+            Rotate180();
+            break;
+        }
+        else if (deg==270){
+            Rotate270();
+            break;
+        }
+        else{
+            cout<<"Please enter a valid choice";
+        }
+    }
+}
 //====== Filter 7 Darken and Lighten Image ======//
 void Dark_and_Light() {
     // Read Image
@@ -378,6 +471,10 @@ void Filters() {
         } 
         else if (ch == "5"){
             Flip();
+            break;
+        }
+        else if (ch == "6"){
+            Rotate();
             break;
         }
         else if (ch == "7") {
