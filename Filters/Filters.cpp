@@ -117,7 +117,7 @@ void Invert() {
     string new_fileName;
     cin >> new_fileName;
     img.saveImage(new_fileName);
-
+}
 //====== Filter 4 Merge Images ======//
 void Merge() {
     // Read Image
