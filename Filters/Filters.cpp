@@ -430,6 +430,42 @@ void Detect_Image() {
 }
 
 //====== Filter 11 Resizing Image ======//
+void Resize_Image(){
+    // Read Image
+    cout << "Enter the name of the image(with extensions) you want to apply filters on : ";
+    string filename;
+    cin >> filename;
+    Image img(filename);
+
+    // Get the new dimensions from the user
+    int newWidth, newHeight;
+    cout << "Enter new width: ";
+    cin >> newWidth;
+    cout << "Enter new height: ";
+    cin >> newHeight;
+
+    // Create a new image with the specified dimensions
+    Image resizedImg(newWidth, newHeight);
+    float sr,sc;
+    sr = img.width / newWidth;
+    sc = img.height / newHeight;
+
+    // Resize the image
+    for (int i = 0; i < newWidth; i++) {
+        for (int j = 0; j < newHeight; j++) {
+            for (int k = 0; k < 3; ++k) {
+                resizedImg(i,j,k) = img(round(i*sr), round(j*sc) , k);
+            }
+        }
+    }
+    // Save Image
+    cout << "Please Enter the name of the new filtered image\n";
+    cout << "& specify extension .jpg, .bmp, .png, .tga : ";
+    string new_fileName;
+    cin >> new_fileName;
+    resizedImg.saveImage(new_fileName);
+
+}
 
 //====== Filter 12 Blur Image ======//
 
@@ -483,6 +519,10 @@ void Filters() {
         }
         else if(ch == "10") {
             Detect_Image();
+            break;
+        } 
+        else if(ch == "11") {
+            Resize_Image();
             break;
         }
         else {
