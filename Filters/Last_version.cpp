@@ -32,6 +32,7 @@ string Read_Img(string img_name)
     return img_name;
 }
 
+//====== Filter 1 Gray Scale ======//
 void GrayScale(string User_img)
 {
     Image img = Read_Img(User_img);
@@ -57,6 +58,82 @@ void GrayScale(string User_img)
     img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
     // img_ptr->loadNewImage(name_filtered);
 }
+
+//====== Filter 2 Black and White ======//
+void Black_and_White(string User_img) {
+
+    Image img = Read_Img(User_img);
+    Image *curr_img = new Image(img.width, img.height); // Dynamically allocate memory
+
+    // Filter
+    for (int i = 0; i < img.width; ++i) {
+        for (int j = 0; j < img.height; ++j) {
+
+            unsigned int avg = 0;
+            for (int k = 0; k < img.channels; ++k) {
+                avg += img(i, j, k);
+            }
+            avg = avg / 3;
+            for (int k = 0; k < 3; ++k) {
+                if (avg > 127) {
+                    img(i, j, k) = 255;
+                    (*curr_img)(i,j,k) = img(i,j,k); 
+                } else {
+                    img(i, j, k) = 0;
+                    (*curr_img)(i,j,k) = img(i,j,k); 
+                }
+            }
+        }
+    }
+
+    img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
+}
+
+//====== Filter 3 Invert Image ======//
+void Invert(string User_img) {
+    Image img = Read_Img(User_img);
+    Image *curr_img = new Image(img.width, img.height); // Dynamically allocate memory
+
+    // Filter
+    for (int i = 0; i < img.width; ++i)
+    {
+        for (int j = 0; j < img.height; ++j)
+        {
+            for (int k = 0; k < 3; ++k)
+            {
+                int num;
+                num=img(i,j,k);
+                img(i,j,k)=255-num;
+                (*curr_img)(i, j, k) = img(i, j, k);
+            }
+        }
+    }
+    img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
+}
+
+//====== Filter 4 Merge Images ======//
+void Merge(string User_img, string User_img2) {
+    // Read Image
+    Image img = Read_Img(User_img);
+    Image img2 = Read_Img(User_img2);
+    Image *curr_img = new Image(img.width, img.height); // Dynamically allocate memory
+
+    for (int i = 0; i < img.width; ++i)
+    {
+        for (int j = 0; j < img.height; ++j)
+        {
+            for (int k = 0; k < img.channels; ++k)
+            {
+                img(i, j, k) = (img(i,j, k) + img2(i,j,k) ) / 2;
+                (*curr_img)(i, j, k) = img(i, j, k);
+            }
+        }
+    }
+
+    img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
+
+}
+
 
 void Dark_and_Light(string User_img)
 {
@@ -111,7 +188,7 @@ void Dark_and_Light(string User_img)
     img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
 }
 
-void Save(const string &save_name = "User_Image.jpg")
+void Save(const string &save_name = "User_Image.jpg") 
 {
     string name;
     if (img_ptr != nullptr)
@@ -146,7 +223,7 @@ void Filters()
     cout << "1) Gray Scale Filter\n";
     cout << "2) Black & White Filter\n";
     cout << "3) Invert Filter\n";
-    cout << "4) Flip Filter\n";
+    cout << "4) Merge\n";
     cout << "5) Darken and Lighten Filter\n";
     cout << "=> ";
     cin >> ch;
@@ -155,6 +232,22 @@ void Filters()
         if (ch == "1")
         {
             GrayScale(*img_name_ptr);
+            break;
+        } 
+        else if( ch == "2" ) {
+            Black_and_White(*img_name_ptr);
+            break;
+        }
+        else if(ch == "3") {
+            Invert(*img_name_ptr);
+            break;
+        } 
+        else if(ch == "4") {
+            string image2;
+            cout << "Enter the second iamge to merge it\n";
+            cin >> image2;
+            cin.ignore();
+            Merge(*img_name_ptr, image2);
             break;
         }
         else if (ch == "5")
