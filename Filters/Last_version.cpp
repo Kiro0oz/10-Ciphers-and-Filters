@@ -131,6 +131,7 @@ void Merge(Image &img, Image &img2) {
 
 }
 
+//====== Filter 5 Flip Image ======//
 void FlipH(Image &img) {
     // Dynamically allocate memory for the flipped image
     Image *curr_img = new Image(img.width, img.height);
@@ -147,7 +148,6 @@ void FlipH(Image &img) {
     // Assign the pointer to the dynamically allocated object
     img_ptr = curr_img;
 }
-
 void FlipV(Image &img) {
 
     Image *curr_img = new Image(img.width, img.height);
@@ -164,7 +164,6 @@ void FlipV(Image &img) {
     // Save the flipped image
     img_ptr = curr_img;
 }
-
 void Flip(Image &img) {
     cout << "1. Horizontally\n2. Vertically\n";
     int choice;
@@ -179,6 +178,82 @@ void Flip(Image &img) {
     }
 }
 
+//====== Filter 6 Rotate Image ======//
+void Rotate90(Image &img){
+    Image *curr_img = new Image(img.height, img.width); // Dynamically allocate memory
+    Image newimg (img.height,img.width);
+
+    for (int i = 0; i < newimg.width; i++) {
+        for (int j = 1; j < newimg.height; j++) {
+            for (int k = 0; k < 3; k++) {
+                newimg(i, j, k) = img(j, i, k);
+            }
+        }
+    }
+    for (int i = 0; i < newimg.width; i++) {
+        for (int j = 1; j < newimg.height; j++) {
+            for (int k = 0; k < 3; k++) {
+                (*curr_img)(i, j, k) = newimg(newimg.width - 1 - i, j, k);
+            }
+        }
+    }
+    img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
+}
+void Rotate180(Image &img){
+    Image *curr_img = new Image(img.width, img.height); // Dynamically allocate memory
+    Image newimg (img.width,img.height);
+
+    for (int i = 0; i < newimg.width; i++) {
+        for (int j = 1; j < newimg.height ; j++) {
+            for(int k=0;k<3;k++){
+                newimg(i,j,k) =img(img.width-i,img.height-j,k);
+                (*curr_img)(i, j, k) = newimg(i, j, k);
+            }
+
+        }
+    }
+    img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
+}
+void Rotate270(Image &img){
+    Image *curr_img = new Image(img.height, img.width); // Dynamically allocate memory
+    Image newimg (img.height,img.width);
+
+    for (int i = 0; i < newimg.width; i++) {
+        for (int j = 1; j < newimg.height ; j++) {
+            for(int k=0;k<3;k++){
+                newimg(i, j, k) = img(img.width-j, i, k);
+                (*curr_img)(i, j, k) = newimg(i, j, k);
+            }
+
+        }
+    }
+    img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
+
+}
+void Rotate(Image &img) {
+    while (true) {
+        cout << "Choose degree of rotation(90,180,270)\n";
+        string choice;
+        getline(cin, choice);
+        if (choice == "90") {
+            Rotate90(img);
+            break;
+        }
+        else if (choice == "180") {
+            Rotate180(img);
+            break;
+        }
+        else if (choice == "270") {
+            Rotate270(img);
+            break;
+        }
+        else {
+            cout << "Please Enter a valid choice.\n";
+        }
+    }
+}
+
+//====== Filter 7 Dark & Light ======//
 void Dark_and_Light(Image &img)
 {
     // Read Image
@@ -232,6 +307,39 @@ void Dark_and_Light(Image &img)
 
     img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
 }
+
+//====== Filter 8 Crop Image ======//
+void Crop(Image &img) {
+
+    int x, y, width, height;
+    cout << "Enter starting point (x, y) of the area to keep: ";
+    cin >> x >> y;
+    cout << "Enter dimensions (width x height) of the area to cut: ";
+    cin >> width >> height;
+    // Check if cropping dimensions exceed image size
+    if (x + width > img.width || y + height > img.height) {
+        cout << "Error: Cropping dimensions exceed image size" << endl;
+        return;
+    }
+
+    Image *curr_img = new Image(width, height); // Dynamically allocate memory
+
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            for (int k = 0; k < img.channels; ++k) {
+                (*curr_img)(i, j, k) = img(x + i, y + j, k);
+            }
+        }
+    }
+
+    img_ptr = curr_img; // Assign the pointer to the cropped image
+}
+
+//====== Filter 9 Adding a Frame ======//
+
+//====== Filter 10 Detect Image Edges ======//
+
+//====== Filter 11 Resizing Image ======//
 void Resize_Image(Image &img) {
     int newWidth, newHeight;
 
@@ -260,32 +368,7 @@ void Resize_Image(Image &img) {
     img_ptr = curr_img;
 }
 
-
-void Crop(Image &img) {
-
-    int x, y, width, height;
-    cout << "Enter starting point (x, y) of the area to keep: ";
-    cin >> x >> y;
-    cout << "Enter dimensions (width x height) of the area to cut: ";
-    cin >> width >> height;
-    // Check if cropping dimensions exceed image size
-    if (x + width > img.width || y + height > img.height) {
-        cout << "Error: Cropping dimensions exceed image size" << endl;
-        return;
-    }
-
-    Image *curr_img = new Image(width, height); // Dynamically allocate memory
-
-    for (int i = 0; i < width; ++i) {
-        for (int j = 0; j < height; ++j) {
-            for (int k = 0; k < img.channels; ++k) {
-                (*curr_img)(i, j, k) = img(x + i, y + j, k);
-            }
-        }
-    }
-
-    img_ptr = curr_img; // Assign the pointer to the cropped image
-}
+//====== Filter 12 Blur Image ======//
 
 void Save(const string &save_name = "User_Image.jpg")
 {
@@ -361,6 +444,10 @@ void Filters()
             Flip(*img_name_ptr);
             break;
         }
+        else if(ch == "6") {
+            Rotate(*img_name_ptr);
+            break;
+        }
         else if (ch == "7")
         {
             Dark_and_Light(*img_name_ptr);
@@ -430,6 +517,10 @@ void Many_Filters(){
         }
         else if(ch == "5") {
             Flip(*img_ptr);
+            break;
+        }
+        else if(ch == "6") {
+            Rotate(*img_ptr);
             break;
         }
         else if (ch == "7")
