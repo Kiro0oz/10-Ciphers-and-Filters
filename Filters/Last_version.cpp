@@ -111,8 +111,6 @@ void Invert(Image &img) {
 //====== Filter 4 Merge Images ======//
 void Merge(Image &img, Image &img2) {
     // Read Image
-    // Image img = Read_Img(User_img);
-    // Image img2 = Read_Img(User_img2);
     Image *curr_img = new Image(img.width, img.height); // Dynamically allocate memory
 
     for (int i = 0; i < img.width; ++i)
@@ -231,10 +229,11 @@ void Rotate270(Image &img){
 
 }
 void Rotate(Image &img) {
+    string choice;
+    cout << "Choose degree of rotation(90,180,270): ";
     while (true) {
-        cout << "Choose degree of rotation(90,180,270)\n";
-        string choice;
-        getline(cin, choice);
+        cin >> choice;
+        cin.ignore();
         if (choice == "90") {
             Rotate90(img);
             break;
@@ -248,8 +247,10 @@ void Rotate(Image &img) {
             break;
         }
         else {
-            cout << "Please Enter a valid choice.\n";
+            cout << "Error! Please Enter a valid choice: ";
+            continue;
         }
+        break;
     }
 }
 
@@ -279,7 +280,7 @@ void Dark_and_Light(Image &img)
             }
         }
     }
-        // light
+    // light
     else if (ch == "2")
     {
         for (int i = 0; i < img.width; i++)
@@ -310,12 +311,17 @@ void Dark_and_Light(Image &img)
 
 //====== Filter 8 Crop Image ======//
 void Crop(Image &img) {
-
     int x, y, width, height;
-    cout << "Enter starting point (x, y) of the area to keep: ";
-    cin >> x >> y;
-    cout << "Enter dimensions (width x height) of the area to cut: ";
-    cin >> width >> height;
+    cout << "Enter starting point (x, y) of the area to keep\n";
+    cout << "X: ";
+    cin >> x;
+    cout << "Y: ";
+    cin >> y;
+    cout << "Enter dimensions (width x height) of the area to cut\n";
+    cout << "Width: ";
+    cin >> width;
+    cout << "Height: ";
+    cin >> height;
     // Check if cropping dimensions exceed image size
     if (x + width > img.width || y + height > img.height) {
         cout << "Error: Cropping dimensions exceed image size" << endl;
@@ -338,26 +344,74 @@ void Crop(Image &img) {
 //====== Filter 9 Adding a Frame ======//
 
 //====== Filter 10 Detect Image Edges ======//
+void Detect_Image(Image &img) {
+    
+Image *curr_img = new Image(img.width, img.height);
+
+ for (int i = 0; i < img.width; ++i)
+    {
+        for (int j = 0; j < img.height; ++j)
+        {
+            unsigned int avg = 0;
+            for (int k = 0; k < img.channels; ++k)
+            {
+                avg += img(i, j, k);
+            }
+            avg /= 3;
+            for (int l = 0; l < 3; ++l) {
+                img(i,j,l) = avg;
+            }
+
+        }
+    }
+
+    for (int i = 0; i < img.width; ++i) {
+        for (int j = 0; j < img.height; ++j) {
+
+            unsigned int avg = 0;
+            for (int k = 0; k < img.channels; ++k) {
+                avg += img(i, j, k);
+            }
+            avg = avg / 3;
+            for (int k = 0; k < 3; ++k) {
+                if (avg > 127) {
+                    img(i, j, k) = 255;
+                } else {
+                    img(i, j, k) = 0;
+                }
+            }
+        }
+    }
+
+    for(int i = 0; i < img.width; i++) {
+        for(int j = 0; j < img.height; j++){
+            for(int k = 0; k < img.channels; k++) {
+                if(img(i,j,k) == 0 && img(i++,j,k) == 0 && img(i--,j,k) == 0 && img(i,j + 1,k) == 0 && 
+                img(i,j - 1,k) == 0) {
+                    (*curr_img)(i,j,k) = 255;
+                } else {
+                    (*curr_img)(i,j,k) = img(i,j,k);
+                }
+            }
+        }
+    }
+
+    // Assign the pointer to the dynamically allocated object
+    img_ptr = curr_img;
+}
 
 //====== Filter 11 Resizing Image ======//
-void Resize_Image(Image &img) {
-    int newWidth, newHeight;
-
-    // Get the new dimensions from the user
-    cout << "Enter new width: ";
-    cin >> newWidth;
-    cout << "Enter new height: ";
-    cin >> newHeight;
+void Resize_Image(Image &img, int w, int h) {
 
     // Create a new image with the specified dimensions
-    Image *curr_img = new Image(newWidth, newHeight); // Dynamically allocate memory
+    Image *curr_img = new Image(w, h); // Dynamically allocate memory
 
-    float sr = static_cast<float>(img.width) / newWidth;
-    float sc = static_cast<float>(img.height) / newHeight;
+    float sr = static_cast<float>(img.width) / w;
+    float sc = static_cast<float>(img.height) / h;
 
     // Resize the image
-    for (int i = 0; i < newWidth; i++) {
-        for (int j = 0; j < newHeight; j++) {
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < h; j++) {
             for (int k = 0; k < 3; ++k) {
                 (*curr_img)(i, j, k) = img(round(i * sr), round(j * sc), k);
             }
@@ -370,6 +424,36 @@ void Resize_Image(Image &img) {
 
 //====== Filter 12 Blur Image ======//
 
+
+
+//====== Filter 13 Infrared ======//
+void Infrared(Image &img) {
+    // Image img("samurai.jpg");
+    Image *curr_img = new Image(img.width, img.height); // Dynamically allocate memory
+    for(int i = 1; i < img.width; i++) {
+        for(int j = 1; j < img.height; j++) {
+           
+            int red = img(i, j, 0);
+            int green = img(i, j, 1);
+            int blue = img(i, j, 2);
+           
+            red = 255;
+            green = 255 - green;             
+            blue = 255 - blue; 
+            // Setting new RGB values
+            img(i, j, 0) = red;
+            img(i, j, 1) = green;
+            img(i, j, 2) = blue;
+            (*curr_img)(i,j,0) = img(i, j, 0);
+            (*curr_img)(i,j,1) = img(i, j, 1);
+            (*curr_img)(i,j,2) = img(i, j, 2);
+        }
+    }
+
+    img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
+}
+
+// Save Image
 void Save(const string &save_name = "User_Image.jpg")
 {
     string name;
@@ -398,10 +482,12 @@ void Save(const string &save_name = "User_Image.jpg")
     }
 }
 
+
+
 void Filters()
 {
     string ch, image_name;
-    cout << "Choose a wonderful filter to be applied on your image : \n";
+    cout << "\nChoose a wonderful filter to be applied on your image : \n";
     cout << "1) Gray Scale Filter\n";
     cout << "2) Black & White Filter\n";
     cout << "3) Invert Filter\n";
@@ -411,9 +497,10 @@ void Filters()
     cout << "7) Darken and Lighten Filter\n";
     cout << "8) Crop Filter\n";
     cout << "9) Adding a Frame Filter\n";
-    cout << "10)Detect Image Edges Filter\n";
-    cout << "11)Resize Image Filter\n";
-    cout << "12)Blur Images Filter\n";
+    cout << "10) Detect Image Edges Filter\n";
+    cout << "11) Resize Image Filter\n";
+    cout << "12) Blur Images Filter\n";
+    cout << "13) Infrared Filter\n";
     cout << "=> ";
     cin >> ch;
     while (true)
@@ -458,9 +545,24 @@ void Filters()
             Crop(*img_name_ptr);
             break;
         }
+        else if (ch == "10") {
+            Detect_Image(*img_name_ptr);
+            break;
+        }
         else if (ch == "11")
         {
-            Resize_Image(*img_name_ptr);
+            int newWidth, newHeight;
+            // Get the new dimensions from the user
+            cout << "Enter new width: ";
+            cin >> newWidth;
+            cout << "Enter new height: ";
+            cin >> newHeight;
+
+            Resize_Image(*img_name_ptr, newWidth, newHeight);
+            break;
+        }
+        else if(ch == "13") {
+            Infrared(*img_name_ptr);
             break;
         }
         else
@@ -472,11 +574,10 @@ void Filters()
 
     return;
 }
-
+// Function for applying many filters to the image
 void Many_Filters(){
-
     string ch, image_name;
-    cout << "Choose a wonderful filter to be applied on your image : \n";
+    cout << "\nChoose a wonderful filter to be applied on your image : \n";
     cout << "1) Gray Scale Filter\n";
     cout << "2) Black & White Filter\n";
     cout << "3) Invert Filter\n";
@@ -486,9 +587,10 @@ void Many_Filters(){
     cout << "7) Darken and Lighten Filter\n";
     cout << "8) Crop Filter\n";
     cout << "9) Adding a Frame Filter\n";
-    cout << "10)Detect Image Edges Filter\n";
-    cout << "11)Resize Image Filter\n";
-    cout << "12)Blur Images Filter\n";
+    cout << "10) Detect Image Edges Filter\n";
+    cout << "11) Resize Image Filter\n";
+    cout << "12) Blur Images Filter\n";
+    cout << "13) Infrared Filter\n";
     cout << "=> ";
     cin >> ch;
     while (true)
@@ -535,7 +637,17 @@ void Many_Filters(){
         }
         else if (ch == "11")
         {
-            Resize_Image(*img_ptr);
+            int newWidth, newHeight;
+            // Get the new dimensions from the user
+            cout << "Enter new width: ";
+            cin >> newWidth;
+            cout << "Enter new height: ";
+            cin >> newHeight;
+            Resize_Image(*img_ptr, newWidth, newHeight);
+            break;
+        }
+        else if(ch == "13") {
+            Infrared(*img_ptr);
             break;
         }
         else
@@ -550,6 +662,9 @@ void Many_Filters(){
 
 void Menu()
 {
+        cout << "===========================================\n";
+        cout << "* Welcome to the Baby Photoshop Program *\n";
+        cout << "===========================================\n";
     while (true)
     {
         string ch, image_name;
