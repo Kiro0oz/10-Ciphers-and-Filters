@@ -348,10 +348,6 @@ void Filters()
             Invert(*img_name_ptr);
             break;
         }
-        else if(ch == "5") {
-            Flip(*img_name_ptr);
-            break;
-        }
         else if(ch == "4") {
             string image2;
             cout << "Enter the second image to merge it\n";
@@ -359,6 +355,10 @@ void Filters()
             Image User_img2 = Read_Img(image2);
             cin.ignore();
             Merge(*img_name_ptr, User_img2);
+            break;
+        }
+        else if(ch == "5") {
+            Flip(*img_name_ptr);
             break;
         }
         else if (ch == "7")
