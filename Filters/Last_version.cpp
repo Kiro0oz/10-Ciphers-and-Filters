@@ -74,10 +74,10 @@ void Black_and_White(Image &img) {
             for (int k = 0; k < 3; ++k) {
                 if (avg > 127) {
                     img(i, j, k) = 255;
-                    (*curr_img)(i,j,k) = img(i,j,k); 
+                    (*curr_img)(i,j,k) = img(i,j,k);
                 } else {
                     img(i, j, k) = 0;
-                    (*curr_img)(i,j,k) = img(i,j,k); 
+                    (*curr_img)(i,j,k) = img(i,j,k);
                 }
             }
         }
@@ -131,6 +131,53 @@ void Merge(Image &img, Image &img2) {
 
 }
 
+void FlipH(Image &img) {
+    // Dynamically allocate memory for the flipped image
+    Image *curr_img = new Image(img.width, img.height);
+
+    for (int i = 0; i < img.width; i++) {
+        for (int j = 0; j < img.height; j++) {
+            for (int k = 0; k < img.channels; k++) {
+                // Flip horizontally by swapping pixels
+                (*curr_img)(i, j, k) = img(img.width - 1 - i, j, k);
+            }
+        }
+    }
+
+    // Assign the pointer to the dynamically allocated object
+    img_ptr = curr_img;
+}
+
+void FlipV(Image &img) {
+
+    Image *curr_img = new Image(img.width, img.height);
+
+    for (int i = 0; i < img.width; i++) {
+        for (int j = 0; j < img.height; j++) {
+            for (int k = 0; k < img.channels; k++) {
+                // Flip vertically by swapping pixels
+                (*curr_img)(i, j, k) = img(i, img.height - 1 - j, k);
+            }
+        }
+    }
+
+    // Save the flipped image
+    img_ptr = curr_img;
+}
+
+void Flip(Image &img) {
+    cout << "1. Horizontally\n2. Vertically\n";
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        FlipH(img);
+    } else if (choice == 2) {
+        FlipV(img);
+    } else {
+        cout << "Invalid choice.\n";
+    }
+}
 
 void Dark_and_Light(Image &img)
 {
@@ -138,6 +185,7 @@ void Dark_and_Light(Image &img)
     string ch;
     // Image img = Read_Img(User_img);
     Image *curr_img = new Image(img.width, img.height);
+
     cout << "1) Darker\n";
     cout << "2) Lighter\n";
     cout << "=> ";
@@ -156,7 +204,7 @@ void Dark_and_Light(Image &img)
             }
         }
     }
-    // light
+        // light
     else if (ch == "2")
     {
         for (int i = 0; i < img.width; i++)
@@ -184,6 +232,34 @@ void Dark_and_Light(Image &img)
 
     img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
 }
+void Resize_Image(Image &img) {
+    int newWidth, newHeight;
+
+    // Get the new dimensions from the user
+    cout << "Enter new width: ";
+    cin >> newWidth;
+    cout << "Enter new height: ";
+    cin >> newHeight;
+
+    // Create a new image with the specified dimensions
+    Image *curr_img = new Image(newWidth, newHeight); // Dynamically allocate memory
+
+    float sr = static_cast<float>(img.width) / newWidth;
+    float sc = static_cast<float>(img.height) / newHeight;
+
+    // Resize the image
+    for (int i = 0; i < newWidth; i++) {
+        for (int j = 0; j < newHeight; j++) {
+            for (int k = 0; k < 3; ++k) {
+                (*curr_img)(i, j, k) = img(round(i * sr), round(j * sc), k);
+            }
+        }
+    }
+
+    // Assign the pointer to the dynamically allocated object
+    img_ptr = curr_img;
+}
+
 
 void Crop(Image &img) {
 
@@ -211,7 +287,7 @@ void Crop(Image &img) {
     img_ptr = curr_img; // Assign the pointer to the cropped image
 }
 
-void Save(const string &save_name = "User_Image.jpg") 
+void Save(const string &save_name = "User_Image.jpg")
 {
     string name;
     if (img_ptr != nullptr)
@@ -263,7 +339,7 @@ void Filters()
         {
             GrayScale(*img_name_ptr);
             break;
-        } 
+        }
         else if( ch == "2" ) {
             Black_and_White(*img_name_ptr);
             break;
@@ -271,7 +347,11 @@ void Filters()
         else if(ch == "3") {
             Invert(*img_name_ptr);
             break;
-        } 
+        }
+        else if(ch == "5") {
+            Flip(*img_name_ptr);
+            break;
+        }
         else if(ch == "4") {
             string image2;
             cout << "Enter the second image to merge it\n";
@@ -289,6 +369,11 @@ void Filters()
         else if (ch == "8")
         {
             Crop(*img_name_ptr);
+            break;
+        }
+        else if (ch == "11")
+        {
+            Resize_Image(*img_name_ptr);
             break;
         }
         else
@@ -325,7 +410,7 @@ void Many_Filters(){
         {
             GrayScale(*img_ptr);
             break;
-        } 
+        }
         else if( ch == "2" ) {
             Black_and_White(*img_ptr);
             break;
@@ -333,7 +418,7 @@ void Many_Filters(){
         else if(ch == "3") {
             Invert(*img_ptr);
             break;
-        } 
+        }
         else if(ch == "4") {
             string image2;
             cout << "Enter the second image to merge it: ";
@@ -341,6 +426,10 @@ void Many_Filters(){
             Image User_img2 = Read_Img(image2);
             cin.ignore();
             Merge(*img_ptr, User_img2);
+            break;
+        }
+        else if(ch == "5") {
+            Flip(*img_ptr);
             break;
         }
         else if (ch == "7")
@@ -353,6 +442,11 @@ void Many_Filters(){
             Crop(*img_ptr);
             break;
         }
+        else if (ch == "11")
+        {
+            Resize_Image(*img_ptr);
+            break;
+        }
         else
         {
             cout << "Error! Please insert a valid option\n ";
@@ -360,7 +454,7 @@ void Many_Filters(){
         }
     }
 
-    
+
 }
 
 void Menu()
@@ -420,15 +514,15 @@ void Menu()
                 cin >> ch;
                 if(ch == "1") {
                     if(img_ptr != nullptr) {
-                    string save_name;
-                    cout << "Please Enter the name of the new filtered image\n";
-                    cout << "& specify extension .jpg, .bmp, .png, .tga : ";
-                    cin >> save_name;
-                    cin.ignore();
-                    Save(save_name);
-            } else {
-                    cout << "Error! No image to save\n";
-                }
+                        string save_name;
+                        cout << "Please Enter the name of the new filtered image\n";
+                        cout << "& specify extension .jpg, .bmp, .png, .tga : ";
+                        cin >> save_name;
+                        cin.ignore();
+                        Save(save_name);
+                    } else {
+                        cout << "Error! No image to save\n";
+                    }
                 } else if(ch == "2") {
                     cout << "Bye!!";
                     break;
@@ -436,7 +530,7 @@ void Menu()
                     cout << "Error! Please insert a valid option\n";
                     continue;
                 }
-                
+
             } else {
                 cout << "Bye!!";
                 break;
