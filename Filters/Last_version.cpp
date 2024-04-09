@@ -185,6 +185,32 @@ void Dark_and_Light(Image &img)
     img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
 }
 
+void Crop(Image &img) {
+
+    int x, y, width, height;
+    cout << "Enter starting point (x, y) of the area to keep: ";
+    cin >> x >> y;
+    cout << "Enter dimensions (width x height) of the area to cut: ";
+    cin >> width >> height;
+    // Check if cropping dimensions exceed image size
+    if (x + width > img.width || y + height > img.height) {
+        cout << "Error: Cropping dimensions exceed image size" << endl;
+        return;
+    }
+
+    Image *curr_img = new Image(width, height); // Dynamically allocate memory
+
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            for (int k = 0; k < img.channels; ++k) {
+                (*curr_img)(i, j, k) = img(x + i, y + j, k);
+            }
+        }
+    }
+
+    img_ptr = curr_img; // Assign the pointer to the cropped image
+}
+
 void Save(const string &save_name = "User_Image.jpg") 
 {
     string name;
@@ -197,7 +223,7 @@ void Save(const string &save_name = "User_Image.jpg")
                 img_ptr->saveImage(save_name);
                 delete img_ptr;    // Free the dynamically allocated memory
                 img_ptr = nullptr; // Reset the pointer to null
-                cout << "Save Successfully!\n";
+                cout << "Saved Successfully!\n";
                 flag = true;
                 break;
             }
@@ -216,12 +242,19 @@ void Save(const string &save_name = "User_Image.jpg")
 void Filters()
 {
     string ch, image_name;
-    cout << "Choose a wonderful filter on your iamge\n";
+    cout << "Choose a wonderful filter to be applied on your image : \n";
     cout << "1) Gray Scale Filter\n";
     cout << "2) Black & White Filter\n";
     cout << "3) Invert Filter\n";
     cout << "4) Merge\n";
-    cout << "5) Darken and Lighten Filter\n";
+    cout << "5) Flip Filter\n";
+    cout << "6) Rotate Filter\n";
+    cout << "7) Darken and Lighten Filter\n";
+    cout << "8) Crop Filter\n";
+    cout << "9) Adding a Frame Filter\n";
+    cout << "10)Detect Image Edges Filter\n";
+    cout << "11)Resize Image Filter\n";
+    cout << "12)Blur Images Filter\n";
     cout << "=> ";
     cin >> ch;
     while (true)
@@ -241,16 +274,21 @@ void Filters()
         } 
         else if(ch == "4") {
             string image2;
-            cout << "Enter the second iamge to merge it\n";
+            cout << "Enter the second image to merge it\n";
             cin >> image2;
             Image User_img2 = Read_Img(image2);
             cin.ignore();
             Merge(*img_name_ptr, User_img2);
             break;
         }
-        else if (ch == "5")
+        else if (ch == "7")
         {
             Dark_and_Light(*img_name_ptr);
+            break;
+        }
+        else if (ch == "8")
+        {
+            Crop(*img_name_ptr);
             break;
         }
         else
@@ -266,12 +304,19 @@ void Filters()
 void Many_Filters(){
 
     string ch, image_name;
-    cout << "Choose a wonderful filter on your iamge\n";
+    cout << "Choose a wonderful filter to be applied on your image : \n";
     cout << "1) Gray Scale Filter\n";
     cout << "2) Black & White Filter\n";
     cout << "3) Invert Filter\n";
     cout << "4) Merge\n";
-    cout << "5) Darken and Lighten Filter\n";
+    cout << "5) Flip Filter\n";
+    cout << "6) Rotate Filter\n";
+    cout << "7) Darken and Lighten Filter\n";
+    cout << "8) Crop Filter\n";
+    cout << "9) Adding a Frame Filter\n";
+    cout << "10)Detect Image Edges Filter\n";
+    cout << "11)Resize Image Filter\n";
+    cout << "12)Blur Images Filter\n";
     cout << "=> ";
     cin >> ch;
     while (true)
@@ -291,16 +336,21 @@ void Many_Filters(){
         } 
         else if(ch == "4") {
             string image2;
-            cout << "Enter the second iamge to merge it: ";
+            cout << "Enter the second image to merge it: ";
             cin >> image2;
             Image User_img2 = Read_Img(image2);
             cin.ignore();
             Merge(*img_ptr, User_img2);
             break;
         }
-        else if (ch == "5")
+        else if (ch == "7")
         {
             Dark_and_Light(*img_ptr);
+            break;
+        }
+        else if (ch == "8")
+        {
+            Crop(*img_ptr);
             break;
         }
         else
@@ -318,8 +368,8 @@ void Menu()
     while (true)
     {
         string ch, image_name;
-        cout << "1) Insert a new iamge from your device (with extention)\n";
-        cout << "2) Apply a filter on the currant image\n";
+        cout << "1) Insert a new image from your device (with extention)\n";
+        cout << "2) Apply a filter on the current image\n";
         cout << "3) Save Image\n";
         cout << "4) Exit the program!\n";
         cout << "=> ";
@@ -342,7 +392,7 @@ void Menu()
             }
             else
             {
-                cout << "There is no iamge, please first insert a new iamge\n";
+                cout << "There is no image, please first insert a new image\n";
             }
         }
         else if (ch == "3")
@@ -363,13 +413,13 @@ void Menu()
         {
             if (flag == false) {
                 string ch;
-                cout << "Are you sure to exit without saving image\n";
+                cout << "Are you sure to exit without saving image?\n";
                 cout << "1) Save\n";
                 cout << "2) Exit\n";
                 cout << "=> ";
                 cin >> ch;
                 if(ch == "1") {
-                  if(img_ptr != nullptr) {
+                    if(img_ptr != nullptr) {
                     string save_name;
                     cout << "Please Enter the name of the new filtered image\n";
                     cout << "& specify extension .jpg, .bmp, .png, .tga : ";
@@ -380,7 +430,7 @@ void Menu()
                     cout << "Error! No image to save\n";
                 }
                 } else if(ch == "2") {
-                    cout << "Buy!!";
+                    cout << "Bye!!";
                     break;
                 } else {
                     cout << "Error! Please insert a valid option\n";
@@ -388,7 +438,7 @@ void Menu()
                 }
                 
             } else {
-                cout << "Buy!!";
+                cout << "Bye!!";
                 break;
             }
         }
