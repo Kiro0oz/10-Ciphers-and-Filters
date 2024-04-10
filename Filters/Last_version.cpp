@@ -345,7 +345,7 @@ void Crop(Image &img) {
 
 //====== Filter 10 Detect Image Edges ======//
 void Detect_Image(Image &img) {
-    
+
 Image *curr_img = new Image(img.width, img.height);
 
  for (int i = 0; i < img.width; ++i)
@@ -386,7 +386,7 @@ Image *curr_img = new Image(img.width, img.height);
     for(int i = 0; i < img.width; i++) {
         for(int j = 0; j < img.height; j++){
             for(int k = 0; k < img.channels; k++) {
-                if(img(i,j,k) == 0 && img(i++,j,k) == 0 && img(i--,j,k) == 0 && img(i,j + 1,k) == 0 && 
+                if(img(i,j,k) == 0 && img(i++,j,k) == 0 && img(i--,j,k) == 0 && img(i,j + 1,k) == 0 &&
                 img(i,j - 1,k) == 0) {
                     (*curr_img)(i,j,k) = 255;
                 } else {
@@ -432,14 +432,14 @@ void Infrared(Image &img) {
     Image *curr_img = new Image(img.width, img.height); // Dynamically allocate memory
     for(int i = 1; i < img.width; i++) {
         for(int j = 1; j < img.height; j++) {
-           
+
             int red = img(i, j, 0);
             int green = img(i, j, 1);
             int blue = img(i, j, 2);
-           
+
             red = 255;
-            green = 255 - green;             
-            blue = 255 - blue; 
+            green = 255 - green;
+            blue = 255 - blue;
             // Setting new RGB values
             img(i, j, 0) = red;
             img(i, j, 1) = green;
@@ -452,6 +452,30 @@ void Infrared(Image &img) {
 
     img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
 }
+
+//===== Filter 14 Natural Sunlight =====//
+void sunlight(Image &img) {
+
+    Image *curr_img = new Image(img.width, img.height);
+    // Define sunlight color and intensity
+    const int Sun_intensity = 64;
+    const int sun_col[] = {255, 255, 0};
+
+    for (int i = 0; i < img.width; ++i) {
+        for (int j = 0; j < img.height; ++j) {
+            for (int k = 0; k < 3; ++k) {
+                int value = img(i, j, k) + Sun_intensity * sun_col[k] / 255;
+                if (value > 255) {
+                    (*curr_img)(i, j, k)= img(i, j, k) = 255;
+                } else {
+                    (*curr_img)(i, j, k)=img(i, j, k) = value;
+                }
+            }
+        }
+    }
+    img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
+}
+
 
 // Save Image
 void Save(const string &save_name = "User_Image.jpg")
@@ -501,6 +525,7 @@ void Filters()
     cout << "11) Resize Image Filter\n";
     cout << "12) Blur Images Filter\n";
     cout << "13) Infrared Filter\n";
+    cout << "14) Natural Sunlight Filter\n";
     cout << "=> ";
     cin >> ch;
     while (true)
@@ -563,6 +588,10 @@ void Filters()
         }
         else if(ch == "13") {
             Infrared(*img_name_ptr);
+            break;
+        }
+        else if(ch == "14") {
+            sunlight(*img_name_ptr);
             break;
         }
         else
@@ -648,6 +677,10 @@ void Many_Filters(){
         }
         else if(ch == "13") {
             Infrared(*img_ptr);
+            break;
+        }
+        else if(ch == "14") {
+            sunlight(*img_ptr);
             break;
         }
         else
