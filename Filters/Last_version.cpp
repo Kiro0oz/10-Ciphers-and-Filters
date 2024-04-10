@@ -1,13 +1,28 @@
+/*
+FCAI – Structured Programming – 2024 - Assignment 3
+----------------------------------------------------
+Purpose: 12 Filters + 3 Bonus.
+Author: Kirollos Adel Samir-S17-[ Grayscale , Merge , Darken and Lighten , Detect Image Edges , Infrared]
+        Noura Muhammad Mahmoud-S18-[ Black and White , Flip, Crop , Resize , Natural Sunlight ]
+        Eman Emad Abdulrahim-S18-[ Invert, Rotate , ِAdding a Frame ,Blur , purple at night ]
+IDS: Kirollos Adel-20230295.
+     Noura Muhammad-20230448.
+     Eman Emad- 20230619.
+
+for Github=>https://github.com/Kiro0oz/10-Ciphers/tree/main/Filters.
+*/
+
+
 #include <bits/stdc++.h>
 #include "Image_Class.h"
 using namespace std;
 
-// Pointer to the current iamge
+// Pointer to the current image
 Image *img_ptr;
 // Pointer to the name of image
 Image *img_name_ptr;
 
-// Flag to check if the user save the iamge or not
+// Flag to check if the user save the image or not
 bool flag = false;
 
 
