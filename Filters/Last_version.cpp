@@ -357,7 +357,55 @@ void Crop(Image &img) {
 }
 
 //====== Filter 9 Adding a Frame ======//
-
+void Frame(Image &img) {
+    Image *curr_img = new Image(img.width, img.height); // Dynamically allocate memory
+    int border = img.width / 50; // Width of the frame
+    int innerBorder = img.width / 100; // Width of the inner frame
+    string ch;
+    while (true) {
+        cout << "Choose Frame 1)Blue Frame 2)Fancy";
+        cin >> ch;
+        cin.ignore();
+        if (ch == "1") {
+            for (int i = 0; i < img.width; i++) {
+                for (int j = 0; j < img.height; j++) {
+                    if (i < border || i >= img.width - border || j < border || j >= img.height - border) {
+                        img(i, j, 0) = 0;
+                        img(i, j, 1) = 0;
+                        img(i, j, 2) = 255;
+                    }
+                }
+            }
+            break;
+        }
+        else if (ch == "2") {
+            for (int i = 0; i < img.width; i++) {
+                for (int j = 0; j < img.height; j++) {
+                    if (i < border || i >= img.width - border || j < border || j >= img.height - border) {
+                        img(i, j, 0) = 0;
+                        img(i, j, 1) = 0;
+                        img(i, j, 2) = 255;
+                    }
+                    if ((i >= 2 * border && i < img.width - 2 * border && j >= 2 * border && j < img.height - 2 * border)&& (i < border * 2 + innerBorder || i >= img.width - border * 2 - innerBorder
+                                                                                                                             || j < border * 2 + innerBorder || j >= img.height - border * 2 - innerBorder)) {
+                        for (int k = 0; k < 3; ++k) {
+                            img(i, j, k) = 255;
+                        }
+                    }
+                }
+            }
+            break;
+        }
+    }
+    for (int i = 0; i < img.width; ++i) {
+        for (int j = 0; j < img.height; ++j) {
+            for (int k = 0; k <3 ; ++k) {
+                (*curr_img)(i,j,k)=img(i,j,k);
+            }
+        }
+    }
+    img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
+}
 //====== Filter 10 Detect Image Edges ======//
 void Detect_Image(Image &img) {
 
@@ -491,6 +539,20 @@ void sunlight(Image &img) {
     img_ptr = curr_img; // Assign the pointer to the dynamically allocated object
 }
 
+//===== Filter 15 Purple at night =====//
+void Purple(Image &img){
+    Image *curr_img = new Image(img.width, img.height);
+
+    for (int i = 0; i < img.width; ++i){
+        for (int j = 0; j < img.height; ++j){
+            img(i,j,1)*=0.75;
+            for(int k =0;k<3;++k){
+                (*curr_img)(i, j, k)= img(i, j, k);
+            }
+        }
+    }
+    img_ptr = curr_img;
+}
 
 // Save Image
 void Save(const string &save_name = "User_Image.jpg")
@@ -541,6 +603,7 @@ void Filters()
     cout << "12) Blur Images Filter\n";
     cout << "13) Infrared Filter\n";
     cout << "14) Natural Sunlight Filter\n";
+    cout << "15) Purple at night Filter\n";
     cout << "=> ";
     cin >> ch;
     while (true)
@@ -585,6 +648,11 @@ void Filters()
             Crop(*img_name_ptr);
             break;
         }
+        else if (ch == "9")
+        {
+            Frame(*img_name_ptr);
+            break;
+        }
         else if (ch == "10") {
             Detect_Image(*img_name_ptr);
             break;
@@ -607,6 +675,10 @@ void Filters()
         }
         else if(ch == "14") {
             sunlight(*img_name_ptr);
+            break;
+        }
+        else if(ch == "15") {
+            Purple(*img_name_ptr);
             break;
         }
         else
@@ -635,6 +707,8 @@ void Many_Filters(){
     cout << "11) Resize Image Filter\n";
     cout << "12) Blur Images Filter\n";
     cout << "13) Infrared Filter\n";
+    cout << "14) Natural Sunlight Filter\n";
+    cout << "15) Purple at night Filter\n";
     cout << "=> ";
     cin >> ch;
     while (true)
@@ -679,6 +753,11 @@ void Many_Filters(){
             Crop(*img_ptr);
             break;
         }
+        else if (ch == "9")
+        {
+            Frame(*img_ptr);
+            break;
+        }
         else if (ch == "11")
         {
             int newWidth, newHeight;
@@ -698,14 +777,16 @@ void Many_Filters(){
             sunlight(*img_ptr);
             break;
         }
+        else if(ch == "15") {
+            Purple(*img_ptr);
+            break;
+        }
         else
         {
             cout << "Error! Please insert a valid option\n ";
             break;
         }
     }
-
-
 }
 
 void Menu()
