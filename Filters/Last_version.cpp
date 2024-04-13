@@ -131,7 +131,7 @@ void Merge(Image &img, Image &img2, string op) {
     int max_w = max(img.width, img2.width);
     int max_h = max(img.height, img2.height);
     Image Larger_img(max_w,max_h);
-    
+
     if(op == "1") {
         curr_img = new Image(Larger_img.width, Larger_img.height);
         for(int i = 0; i < max_w; ++i) {
@@ -142,7 +142,7 @@ void Merge(Image &img, Image &img2, string op) {
                 unsigned red_pixel = (img(avg_w,avg_h,0) + img2(i,j,0)) / 2;
                 unsigned green_pixel = (img(avg_w,avg_h,1) + img2(i,j,1)) / 2;
                 unsigned blue_pixel = (img(avg_w,avg_h,2) + img2(i,j,2)) / 2;
-                
+
                 (*curr_img).setPixel(i,j,0, red_pixel);
                 (*curr_img).setPixel(i,j,1, green_pixel);
                 (*curr_img).setPixel(i,j,2, blue_pixel);
@@ -490,7 +490,30 @@ Image *curr_img = new Image(img.width, img.height);
 }
 
 //====== Filter 11 Resizing Image ======//
-void Resize_Image(Image &img, int w, int h) {
+void Resize_Image_dimensions(Image &img, int w, int h) {
+
+    // Create a new image with the specified dimensions
+    Image *curr_img = new Image(w, h); // Dynamically allocate memory
+    float sr = static_cast<float>(img.width) / w;
+    float sc = static_cast<float>(img.height) / h;
+
+    // Resize the image
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < h; j++) {
+            for (int k = 0; k < 3; ++k) {
+                (*curr_img)(i, j, k) = img(round(i * sr), round(j * sc), k);
+            }
+        }
+    }
+
+    // Assign the pointer to the dynamically allocated object
+    img_ptr = curr_img;
+}
+
+void Resize_Image_ratio(Image &img, float ratio_width, float ratio_height) {
+
+    int w = static_cast<int>(img.width * ratio_width);
+    int h = static_cast<int>(img.height * ratio_height);
 
     // Create a new image with the specified dimensions
     Image *curr_img = new Image(w, h); // Dynamically allocate memory
@@ -507,7 +530,6 @@ void Resize_Image(Image &img, int w, int h) {
         }
     }
 
-    // Assign the pointer to the dynamically allocated object
     img_ptr = curr_img;
 }
 
@@ -540,11 +562,11 @@ Image Blur(Image &img) {
 void apply_bluer(Image &img) {
     Image *curr_img = new Image(img.width, img.height);
     if(img.height > 1000) {
-        Resize_Image(img, img.width, 720);
+        Resize_Image_dimensions(img, img.width, 720);
     }
     curr_img = new Image(Blur(img));
     if(img.height > 1000) {
-        Resize_Image(img, img.width, img.height);
+        Resize_Image_dimensions(img, img.width, img.height);
     }
     img_ptr = curr_img;
 }
@@ -724,16 +746,34 @@ void Filters()
             break;
         }
         else if (ch == "11")
-        {
-            int newWidth, newHeight;
-            // Get the new dimensions from the user
-            cout << "Enter new width: ";
-            cin >> newWidth;
-            cout << "Enter new height: ";
-            cin >> newHeight;
+        {   char c;
+            cout<<"1-Resize by Dimensions"<<endl<<"2-Resize by Ratio"<<endl<<"=>";
+            cin>>c;
+            if (c=='1') {
+                int newWidth, newHeight;
+                // Get the new dimensions from the user
+                cout << "Enter new width: ";
+                cin >> newWidth;
+                cout << "Enter new height: ";
+                cin >> newHeight;
 
-            Resize_Image(*img_name_ptr, newWidth, newHeight);
-            break;
+                Resize_Image_dimensions(*img_name_ptr, newWidth, newHeight);
+                break;
+            }
+            else if (c=='2'){
+                float ratio_width , ratio_height;
+                cout<<"Enter the ratio of width : " ;
+                cin>>ratio_width;
+                cout<<"Enter the ratio of height : ";
+                cin>>ratio_height;
+                Resize_Image_ratio(*img_name_ptr, ratio_width, ratio_height);
+                break;
+
+            }
+            else{
+                cout<<"Error: please try again"<<endl;
+                break;
+            }
         }
         else if(ch == "12") {
             apply_bluer(*img_name_ptr);
@@ -838,15 +878,34 @@ void Many_Filters(){
             break;
         }
         else if (ch == "11")
-        {
-            int newWidth, newHeight;
-            // Get the new dimensions from the user
-            cout << "Enter new width: ";
-            cin >> newWidth;
-            cout << "Enter new height: ";
-            cin >> newHeight;
-            Resize_Image(*img_ptr, newWidth, newHeight);
-            break;
+        {   char c;
+            cout<<"1-Resize by Dimensions"<<endl<<"2-Resize by Ratio"<<endl<<"=>";
+            cin>>c;
+            if (c=='1') {
+                int newWidth, newHeight;
+                // Get the new dimensions from the user
+                cout << "Enter new width: ";
+                cin >> newWidth;
+                cout << "Enter new height: ";
+                cin >> newHeight;
+
+                Resize_Image_dimensions(*img_ptr, newWidth, newHeight);
+                break;
+            }
+            else if (c=='2'){
+                float ratio_width , ratio_height;
+                cout<<"Enter the ratio of width : " ;
+                cin>>ratio_width;
+                cout<<"Enter the ratio of height : ";
+                cin>>ratio_height;
+                Resize_Image_ratio(*img_ptr, ratio_width, ratio_height);
+                break;
+
+            }
+            else{
+                cout<<"Error: please try again"<<endl;
+                break;
+            }
         }
         else if(ch == "12") {
             apply_bluer(*img_ptr);
