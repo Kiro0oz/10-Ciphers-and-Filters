@@ -486,8 +486,30 @@ void Resize_Image(Image &img, int w, int h) {
 }
 
 //====== Filter 12 Blur Image ======//
+void Blur(Image &img) {
+    Image *curr_img = new Image(img.width, img.height);
 
-
+    for (int i = 0; i < img.width; ++i) {
+        for (int j = 0; j < img.height; ++j) {
+            int counter = 0;
+            int Rsum = 0, Gsum = 0, Bsum = 0;
+            for (int x = i-15; x <= i+15; ++x) {
+                for (int y = j-15; y <= j+15; ++y) {
+                    if (x >= 0 && x < img.width && y >= 0 && y < img.height) {
+                        Rsum += img(x,y,0);
+                        Gsum += img(x,y,1);
+                        Bsum += img(x,y, 2);
+                        counter++;
+                    }
+                }
+            }
+            (*curr_img)(i,j,0)=(Rsum/counter);
+            (*curr_img)(i,j,1)=(Gsum/counter);
+            (*curr_img)(i,j,2)=(Bsum/counter);
+        }
+    }
+    img_ptr = curr_img;
+}
 
 //====== Filter 13 Infrared ======//
 void Infrared(Image &img) {
@@ -669,6 +691,10 @@ void Filters()
             Resize_Image(*img_name_ptr, newWidth, newHeight);
             break;
         }
+        else if (ch == "12") {
+            Blur(*img_name_ptr);
+            break;
+        }
         else if(ch == "13") {
             Infrared(*img_name_ptr);
             break;
@@ -767,6 +793,10 @@ void Many_Filters(){
             cout << "Enter new height: ";
             cin >> newHeight;
             Resize_Image(*img_ptr, newWidth, newHeight);
+            break;
+        }
+        else if(ch == "12") {
+            Blur(*img_ptr);
             break;
         }
         else if(ch == "13") {
