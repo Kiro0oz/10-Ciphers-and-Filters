@@ -124,18 +124,41 @@ void Invert(Image &img) {
 }
 
 //====== Filter 4 Merge Images ======//
-void Merge(Image &img, Image &img2) {
+void Merge(Image &img, Image &img2, string op) {
     // Read Image
-    Image *curr_img = new Image(img.width, img.height); // Dynamically allocate memory
+    // Image *curr_img = new Image(img.width, img.height); // Dynamically allocate memory
+    Image *curr_img; // Dynamically allocate memory
+    int max_w = max(img.width, img2.width);
+    int max_h = max(img.height, img2.height);
+    Image Larger_img(max_w,max_h);
+    
+    if(op == "1") {
+        curr_img = new Image(Larger_img.width, Larger_img.height);
+        for(int i = 0; i < max_w; ++i) {
+            for(int j = 0; j < max_h; ++j) {
+                int avg_w = i * img.width / img2.width;
+                int avg_h = j * img.height / img2.height;
 
-    for (int i = 0; i < img.width; ++i)
-    {
-        for (int j = 0; j < img.height; ++j)
+                unsigned red_pixel = (img(avg_w,avg_h,0) + img2(i,j,0)) / 2;
+                unsigned green_pixel = (img(avg_w,avg_h,1) + img2(i,j,1)) / 2;
+                unsigned blue_pixel = (img(avg_w,avg_h,2) + img2(i,j,2)) / 2;
+                
+                (*curr_img).setPixel(i,j,0, red_pixel);
+                (*curr_img).setPixel(i,j,1, green_pixel);
+                (*curr_img).setPixel(i,j,2, blue_pixel);
+            }
+        }
+    } else if(op == "2") {
+        curr_img = new Image(img.width, img.height);
+        for (int i = 0; i < img.width; ++i)
         {
-            for (int k = 0; k < img.channels; ++k)
+            for (int j = 0; j < img.height; ++j)
             {
-                img(i, j, k) = (img(i,j, k) + img2(i,j,k) ) / 2;
-                (*curr_img)(i, j, k) = img(i, j, k);
+                for (int k = 0; k < img.channels; ++k)
+                {
+                    img(i, j, k) = (img(i,j, k) + img2(i,j,k) ) / 2;
+                    (*curr_img)(i, j, k) = img(i, j, k);
+                }
             }
         }
     }
@@ -363,7 +386,10 @@ void Frame(Image &img) {
     int innerBorder = img.width / 100; // Width of the inner frame
     string ch;
     while (true) {
-        cout << "Choose Frame 1)Blue Frame 2)Fancy";
+        cout << "Choose Frame:-\n";
+        cout << "1) Blue Frame\n";
+        cout << "2) Fancy\n";
+        cout << "=> ";
         cin >> ch;
         cin.ignore();
         if (ch == "1") {
@@ -486,9 +512,8 @@ void Resize_Image(Image &img, int w, int h) {
 }
 
 //====== Filter 12 Blur Image ======//
-void Blur(Image &img) {
+Image Blur(Image &img) {
     Image *curr_img = new Image(img.width, img.height);
-
     for (int i = 0; i < img.width; ++i) {
         for (int j = 0; j < img.height; ++j) {
             int counter = 0;
@@ -509,7 +534,21 @@ void Blur(Image &img) {
         }
     }
     img_ptr = curr_img;
+    return (*img_ptr);
 }
+
+void apply_bluer(Image &img) {
+    Image *curr_img = new Image(img.width, img.height);
+    if(img.height > 1000) {
+        Resize_Image(img, img.width, 720);
+    }
+    curr_img = new Image(Blur(img));
+    if(img.height > 1000) {
+        Resize_Image(img, img.width, img.height);
+    }
+    img_ptr = curr_img;
+}
+
 
 //====== Filter 13 Infrared ======//
 void Infrared(Image &img) {
@@ -644,12 +683,17 @@ void Filters()
             break;
         }
         else if(ch == "4") {
-            string image2;
+            string image2,ch;
             cout << "Enter the second image to merge it\n";
             cin >> image2;
             Image User_img2 = Read_Img(image2);
             cin.ignore();
-            Merge(*img_name_ptr, User_img2);
+            cout << "1) Resize the smaller image to lager\n";
+            cout << "2) Merge the common area\n";
+            cout << "=> ";
+            cin >> ch;
+            cin.ignore();
+            Merge(*img_name_ptr, User_img2, ch);
             break;
         }
         else if(ch == "5") {
@@ -691,8 +735,8 @@ void Filters()
             Resize_Image(*img_name_ptr, newWidth, newHeight);
             break;
         }
-        else if (ch == "12") {
-            Blur(*img_name_ptr);
+        else if(ch == "12") {
+            apply_bluer(*img_name_ptr);
             break;
         }
         else if(ch == "13") {
@@ -753,12 +797,17 @@ void Many_Filters(){
             break;
         }
         else if(ch == "4") {
-            string image2;
-            cout << "Enter the second image to merge it: ";
+            string image2,ch;
+            cout << "Enter the second image to merge it\n";
             cin >> image2;
             Image User_img2 = Read_Img(image2);
             cin.ignore();
-            Merge(*img_ptr, User_img2);
+            cout << "1) Resize the smaller image to lager\n";
+            cout << "2) Merge the common area\n";
+            cout << "=> ";
+            cin >> ch;
+            cin.ignore();
+            Merge(*img_ptr, User_img2, ch);
             break;
         }
         else if(ch == "5") {
@@ -784,6 +833,10 @@ void Many_Filters(){
             Frame(*img_ptr);
             break;
         }
+        else if(ch == "10") {
+            Detect_Image(*img_ptr);
+            break;
+        }
         else if (ch == "11")
         {
             int newWidth, newHeight;
@@ -796,7 +849,7 @@ void Many_Filters(){
             break;
         }
         else if(ch == "12") {
-            Blur(*img_ptr);
+            apply_bluer(*img_ptr);
             break;
         }
         else if(ch == "13") {
