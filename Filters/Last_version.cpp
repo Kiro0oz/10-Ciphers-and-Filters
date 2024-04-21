@@ -559,16 +559,18 @@ Image Blur(Image &img) {
     return (*img_ptr);
 }
 
-void apply_bluer(Image &img) {
+void Apply_Blur(Image &img) {
     Image *curr_img = new Image(img.width, img.height);
     if(img.height > 1000) {
         Resize_Image_dimensions(img, img.width, 720);
     }
     curr_img = new Image(Blur(img));
+    // Blur(img);
     if(img.height > 1000) {
         Resize_Image_dimensions(img, img.width, img.height);
     }
     img_ptr = curr_img;
+    // img_ptr = &img;
 }
 
 
@@ -637,6 +639,99 @@ void Purple(Image &img){
     img_ptr = curr_img;
 }
 
+//===== Filter 16 Skew =====//
+void Skew(Image& image) {
+    double angle;
+    cout << "Enter the skew angle in degrees (between 0 and 90): \n";
+    while (true) {
+        cin >> angle;
+        cin.ignore();
+        if (cin.fail() || angle < 0 || angle > 90) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter an angle between 0 and 90 degrees.\n";
+        } else {
+            break;
+        }
+    }
+    double skew = tan(angle * M_PI / 180);
+    int new_width = image.width + static_cast<int>(image.height * fabs(skew));
+    int new_height = image.height;
+    if (angle > 45) {
+        new_width = image.width;
+        new_height = image.height + static_cast<int>(image.width * fabs(tan((90 - angle) * M_PI / 180)));
+    }
+    Image new_image(new_width, new_height);
+    Image *curr_img = new Image(new_image.width, new_image.height);
+    for (int i = 0; i < new_image.width; ++i) {
+        for (int j = 0; j < new_image.height; ++j) {
+            int newi, newj;
+            if (angle <= 45) {
+                newi = i - static_cast<int>((new_image.height - 1 - j) * skew);
+                newj = j;
+            } else {
+                newi = i;
+                newj = j - static_cast<int>((new_image.width - 1 - i) * tan((90 - angle) * M_PI / 180));
+            }
+            if (newi >= 0 && newi < image.width && newj >= 0 && newj < image.height) {
+                for (int k = 0; k < 3; ++k) {
+                    new_image(i, j, k) = image(newi, newj, k);
+                    (*curr_img)(i, j, k) = new_image(i, j, k);
+                }
+            }
+        }
+    }
+    img_ptr = curr_img;
+}
+
+//===== Filter 17 Old TV =====//
+void old_tv(Image& image) {
+    Image *curr_img = new Image(image.width, image.height);
+    srand(static_cast<unsigned int>(time(nullptr)));
+    for (int i = 0; i < image.height; ++i) {
+        for (int j = 0; j < image.width; ++j) {
+            int random = rand() % 256 - 128;
+            for (int k = 0; k < 3; ++k) {
+                int newValue = image(j, i, k) + random;
+                newValue = max(0, min(255, newValue)); 
+                image(j, i, k) = static_cast<unsigned char>(newValue);
+                (*curr_img)(j, i, k) = image(j, i, k);
+            }
+        }
+    }
+    img_ptr = curr_img;
+}
+
+
+//===== Filter 18 Skewing =====//
+void Skewing (Image& image){
+    int angle;
+    cout << "Enter the skew angle in degrees: \n";
+    while (true){
+        cin >> angle;
+        cin.ignore();
+        if (cin.fail() || angle >= 90 || angle < 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter an angle less than 90 degrees.\n";
+        }
+        else {
+            break;
+        }
+    }
+    double skew = tan(angle * M_PI / 180);
+    Image new_image(image.width + static_cast<int>(image.height * fabs(skew)), image.height);
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            int newi = i + static_cast<int>((image.height-1-j) * skew);
+            for (int k = 0; k < 3; ++k) {
+                new_image(newi, j, k) = image(i, j, k);
+            }
+        }
+    }
+
+}
+
 // Save Image
 void Save(const string &save_name = "User_Image.jpg")
 {
@@ -671,26 +766,30 @@ void Save(const string &save_name = "User_Image.jpg")
 void Filters()
 {
     string ch, image_name;
-    cout << "\nChoose a wonderful filter to be applied on your image : \n";
-    cout << "1) Gray Scale Filter\n";
-    cout << "2) Black & White Filter\n";
-    cout << "3) Invert Filter\n";
-    cout << "4) Merge\n";
-    cout << "5) Flip Filter\n";
-    cout << "6) Rotate Filter\n";
-    cout << "7) Darken and Lighten Filter\n";
-    cout << "8) Crop Filter\n";
-    cout << "9) Adding a Frame Filter\n";
-    cout << "10) Detect Image Edges Filter\n";
-    cout << "11) Resize Image Filter\n";
-    cout << "12) Blur Images Filter\n";
-    cout << "13) Infrared Filter\n";
-    cout << "14) Natural Sunlight Filter\n";
-    cout << "15) Purple at night Filter\n";
-    cout << "=> ";
-    cin >> ch;
+
     while (true)
     {
+        cout << "\nChoose a wonderful filter to be applied on your image : \n";
+        cout << "1) Gray Scale Filter\n";
+        cout << "2) Black & White Filter\n";
+        cout << "3) Invert Filter\n";
+        cout << "4) Merge\n";
+        cout << "5) Flip Filter\n";
+        cout << "6) Rotate Filter\n";
+        cout << "7) Darken and Lighten Filter\n";
+        cout << "8) Crop Filter\n";
+        cout << "9) Adding a Frame Filter\n";
+        cout << "10) Detect Image Edges Filter\n";
+        cout << "11) Resize Image Filter\n";
+        cout << "12) Blur Images Filter\n";
+        cout << "13) Infrared Filter\n";
+        cout << "14) Natural Sunlight Filter\n";
+        cout << "15) Purple at night Filter\n";
+        cout << "16) Skew Filter\n";
+        cout << "17) OldTv Filter\n";
+        cout << "18) Skew Filter\n";
+        cout << "=> ";
+        cin >> ch;
         if (ch == "1")
         {
             GrayScale(*img_name_ptr);
@@ -776,7 +875,7 @@ void Filters()
             }
         }
         else if(ch == "12") {
-            apply_bluer(*img_name_ptr);
+            Apply_Blur(*img_name_ptr);
             break;
         }
         else if(ch == "13") {
@@ -791,14 +890,24 @@ void Filters()
             Purple(*img_name_ptr);
             break;
         }
+        else if(ch == "16") {
+            Skew(*img_name_ptr);
+            break;
+        }
+         else if(ch == "17") {
+            old_tv(*img_name_ptr);
+            break;
+        }
+        else if(ch == "18") {
+            Skewing(*img_name_ptr);
+            break;
+        }
         else
         {
             cout << "Error! Please insert a valid option\n ";
-            break;
+            continue;
         }
     }
-
-    return;
 }
 // Function for applying many filters to the image
 void Many_Filters(){
@@ -819,6 +928,9 @@ void Many_Filters(){
     cout << "13) Infrared Filter\n";
     cout << "14) Natural Sunlight Filter\n";
     cout << "15) Purple at night Filter\n";
+    cout << "16) Skew Filter\n";
+    cout << "17) OldTv Filter\n";
+    cout << "18) Skew Filter\n";
     cout << "=> ";
     cin >> ch;
     while (true)
@@ -908,7 +1020,7 @@ void Many_Filters(){
             }
         }
         else if(ch == "12") {
-            apply_bluer(*img_ptr);
+            Apply_Blur(*img_ptr);
             break;
         }
         else if(ch == "13") {
@@ -923,10 +1035,21 @@ void Many_Filters(){
             Purple(*img_ptr);
             break;
         }
+        else if(ch == "16") {
+            Skew(*img_ptr);
+            break;
+        }
+         else if(ch == "17") {
+            old_tv(*img_ptr);
+            break;
+        }
+        else if(ch == "18") {
+            Skewing(*img_ptr);
+            break;
+        }
         else
         {
             cout << "Error! Please insert a valid option\n ";
-            break;
         }
     }
 }
