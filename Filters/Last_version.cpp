@@ -703,34 +703,6 @@ void old_tv(Image& image) {
 }
 
 
-//===== Filter 18 Skewing =====//
-void Skewing (Image& image){
-    int angle;
-    cout << "Enter the skew angle in degrees: \n";
-    while (true){
-        cin >> angle;
-        cin.ignore();
-        if (cin.fail() || angle >= 90 || angle < 0) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter an angle less than 90 degrees.\n";
-        }
-        else {
-            break;
-        }
-    }
-    double skew = tan(angle * M_PI / 180);
-    Image new_image(image.width + static_cast<int>(image.height * fabs(skew)), image.height);
-    for (int i = 0; i < image.width; ++i) {
-        for (int j = 0; j < image.height; ++j) {
-            int newi = i + static_cast<int>((image.height-1-j) * skew);
-            for (int k = 0; k < 3; ++k) {
-                new_image(newi, j, k) = image(i, j, k);
-            }
-        }
-    }
-
-}
 
 // Save Image
 void Save(const string &save_name = "User_Image.jpg")
@@ -787,7 +759,6 @@ void Filters()
         cout << "15) Purple at night Filter\n";
         cout << "16) Skew Filter\n";
         cout << "17) OldTv Filter\n";
-        cout << "18) Skew Filter\n";
         cout << "=> ";
         cin >> ch;
         if (ch == "1")
@@ -898,10 +869,6 @@ void Filters()
             old_tv(*img_name_ptr);
             break;
         }
-        else if(ch == "18") {
-            Skewing(*img_name_ptr);
-            break;
-        }
         else
         {
             cout << "Error! Please insert a valid option\n ";
@@ -930,7 +897,6 @@ void Many_Filters(){
     cout << "15) Purple at night Filter\n";
     cout << "16) Skew Filter\n";
     cout << "17) OldTv Filter\n";
-    cout << "18) Skew Filter\n";
     cout << "=> ";
     cin >> ch;
     while (true)
@@ -1041,10 +1007,6 @@ void Many_Filters(){
         }
          else if(ch == "17") {
             old_tv(*img_ptr);
-            break;
-        }
-        else if(ch == "18") {
-            Skewing(*img_ptr);
             break;
         }
         else
